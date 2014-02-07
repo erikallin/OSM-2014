@@ -21,7 +21,7 @@ void insert(dlist *this, item* thing, bool atTail);
  */
 item* extract(dlist *this, bool atTail);
 
-/* Flips the direction of the indexation */
+/* Flips the direction of the links */
 void reserve(dlist *this);
 
 item* search(dlist *this, bool (*matches(item*)));
