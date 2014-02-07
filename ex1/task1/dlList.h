@@ -8,13 +8,20 @@ typedef struct node_ {
   item           *thing;
   struct node_   *ptr;
 } node;
+
 typedef struct dlist_ {
   node *head, *tail;
 } dlist;
 
-
+/* Inserts an item to either the start or end of the list */
 void insert(dlist *this, item* thing, bool atTail);
+
+/* Extracts either the first or last element in the list, remove it from the
+ * list and returns the item
+ */
 item* extract(dlist *this, bool atTail);
+
+/* Flips the direction of the indexation */
 void reserve(dlist *this);
 
 item* search(dlist *this, bool (*matches(item*)));

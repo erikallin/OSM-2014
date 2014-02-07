@@ -2,7 +2,7 @@ SOURCE=dlList.c
 TARGET=dlList
 
 OBJ=$(SOURCE:.c.o)
-OBJDIR=../obj/
+OBJDIR=obj/
 
 CC=gcc
 CFLAGS= -Wall -Wpedantic -Wextra -std=c99 -O2
