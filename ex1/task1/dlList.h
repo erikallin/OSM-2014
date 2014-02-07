@@ -1,4 +1,5 @@
-
+#ifndef DL_LIST_H
+#define DL_LIST_H
 
 typedef int bool;
 typedef void item; /* We store pointers, cuz why not? */
@@ -17,3 +18,4 @@ item* extract(dlist *this, bool atTail);
 void reserve(dlist *this);
 
 item* search(dlist *this, bool (*matches(item*)));
+#endif // DL_LIST_H
