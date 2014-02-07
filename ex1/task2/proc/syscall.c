@@ -69,3 +69,11 @@ void syscall_handle(context_t *user_context)
     /* Move to next instruction after system call */
     user_context->pc += 4;
 }
+
+int syscall_read(int fhandle, void *buffer, int length) {
+  return 0;
+}
+
+int syscall_write(int fhandle, const void *buffer, int length) {
+  return 0;
+}
