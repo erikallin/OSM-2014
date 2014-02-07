@@ -1,6 +1,13 @@
 This file documents any major changes made to the system
 between releases. The latest changes appear at the top of the list.
 
+BUENOS 1.1.2-g1 (for use in OSM)
+
+       * Makefile:
+       Added -std=c99 to CFLAGS.  -pedantic cannot be added, as
+       kernel/interrupt.c relies on undefined behaviour (treating
+       function pointers as pointers to memory).
+
 
 BUENOS 1.1.2 Release (2012-02-03)
 
