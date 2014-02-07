@@ -9,14 +9,14 @@ void insert(dlist *this, item *thing, bool atTail) {
     this->head = thing;
 }
 
-
+/*
 item* search(dlist *this, bool (*matches(item*))) {
   item *ret;
   int *p = &this;
 
   return ret;
 }
-
+*/
 
 void reverse(dlist *this) {
   dlist *tmp = this;
