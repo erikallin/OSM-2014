@@ -3,11 +3,19 @@
 #include "dlList.h"
 
 void insert(dlist *this, item *thing, bool atTail) {
+  node *newNode = malloc(sizeof(node));
+  newNode->thing = thing;
+
+
   if (atTail) {
-    this->tail = thing;
+    newNode->ptr = &(this->tail);
+    this->tail->ptr = (int)this->tail->ptr ^ (int)newNode->ptr;
+    this->tail = newNode;
   }
   else {
-    this->head = thing;
+    newNode->ptr = &(this->head);
+    this->head->ptr = (int)this->head->ptr ^ (int)newNode->ptr;
+    this->head = newNode;
   }
 }
 
