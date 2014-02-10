@@ -3,10 +3,12 @@
 #include "dlList.h"
 
 void insert(dlist *this, item *thing, bool atTail) {
-  if (atTail)
+  if (atTail) {
     this->tail = thing;
-  else
+  }
+  else {
     this->head = thing;
+  }
 }
 
 /*

@@ -14,7 +14,6 @@ all: build
 #	$(CC) -c $(SOURCE) $(CFLAGS) -o $(TARGET)
 
 build: .start $(OBJ)
-	$(CC) -c $(SOURCE) $(CFLAGS) -o $(TARGET)
 
 clean:
 	rm -rf $(OBJDIR) $(TARGET)
