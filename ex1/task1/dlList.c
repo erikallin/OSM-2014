@@ -6,15 +6,14 @@ void insert(dlist *this, item *thing, bool atTail) {
   node *newNode = malloc(sizeof(node));
   newNode->thing = thing;
 
-
   if (atTail) {
-    newNode->ptr = &(this->tail);
-    this->tail->ptr = (int)this->tail->ptr ^ (int) &newNode;
+    newNode->ptr = (this->tail);
+    this->tail->ptr = (int)this->tail->ptr ^ (int) newNode;
     this->tail = newNode;
   }
   else {
-    newNode->ptr = &(this->head);
-    this->head->ptr = (int)this->head->ptr ^ (int) &newNode;
+    newNode->ptr = (this->head);
+    this->head->ptr = (int)this->head->ptr ^ (int) newNode;
     this->head = newNode;
   }
 }
@@ -36,21 +35,25 @@ void reverse(dlist *this) {
 
 item* extract(dlist *this, bool atTail) {
   item *ext;
-  node *address = this->tail->ptr;
+  node *address;
+  node *cleanup;
   if (atTail){
+   address = this->tail->ptr;
    ext = this->tail->thing;
-   address->ptr = (int)address->ptr  ^ (int) &this->tail;
-   printf("%p item i address\n", address->thing);
-    printf("%p item i address->ptr\n", address->ptr); 
+   address->ptr = (int)address->ptr  ^ (int) this->tail;
+   cleanup = this->tail;
    this->tail = address; 
-   printf("%p\n", address);
-   printf("%p ext værdi \n", ext);
+   free(cleanup);
    return ext;
 }
   else
-    ext = this->head;
-
-  return ext;
+   address = this->head->ptr;
+   ext = this->head->thing;
+   address->ptr = (int)address->ptr  ^ (int) this->head;
+   cleanup = this->head;
+   this->head = address; 
+   free(cleanup);
+   return ext;
 }
 
 int main() {
@@ -60,30 +63,41 @@ int main() {
   dlist *liste = malloc(sizeof(dlist));
   int *i = malloc(sizeof(int));
   int *j = malloc(sizeof(int));
-  i = 5;
-  j = 10;
-  tail->thing = i;
+  int *n = malloc(sizeof(int));
+  int *k = malloc(sizeof(int));
+  i = 1;
+  j = 2;
+  n = 3;
+  k = 4;
+  tail->thing = j;
   tail->ptr = head;
 
-  head->thing = i;
+  head->thing = n;
   head->ptr = tail;
 
  liste->head = head;
  liste->tail = tail;
- printf("%p\n", liste->tail->thing);
- printf("%p\n", liste->head->thing);
- insert(liste,j,1);
- insert(liste,j,0);
- printf("%p\n", liste->tail->thing);
- printf("%p\n", liste->head->thing);
+ printf("%p tail\n", liste->tail);
+ printf("%p head\n", liste->head); 
+ insert(liste,i,1);
+ insert(liste,k,0);
+ printf("%d thing i tail\n",tail->thing);
+ printf("%d thing i nye tail\n",liste->tail->thing);
+ printf("%p pointer i nye tail\n",liste->tail->ptr);
+ printf("%p gamle tail (skal være lig pointer i nye tail)\n",tail);
 /* test for extract */
- printf("%p tailaddress\n",&liste->tail);
- extract(liste,1);
+/* UDKOMMENTER FOR AT TESTE REVERSE; DEN VIL LAVE PRINT OM FRA 4,3,2,1 TIL 1,2,3,4 
+  reverse(liste); */
+ printf("FØLGENDE ER TEST FOR EXTRACT\n");
+ printf("%p thing i head (4)\n",liste->head->thing);
  extract(liste,0);
- printf("%p thing i tail\n",liste->tail->thing);
- printf("%p\n",liste->head->thing);
-
-
-
+ printf("%p thing i nye head(3)\n",liste->head->thing);
+ extract(liste,0);
+ printf("%p thing i nye head(2)\n",liste->head->thing); 
+ extract(liste,0);
+ printf("%p thing i nye head(1)\n",liste->head->thing);
+/* extract(liste,0);
+ printf("%p thing i nye head\n",liste->head->thing); */
+ 
 }
 
