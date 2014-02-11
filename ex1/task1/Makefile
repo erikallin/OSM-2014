@@ -1,17 +1,18 @@
-SOURCE=dlList.c main.c
+MAIN=main.c
+SOURCE=dlList.c# main.c
 TARGET=dlList
 
 OBJ=$(SOURCE:.c=.o)
 OBJDIR=obj/
 
 CC=gcc
-CFLAGS= -Wall -Wpedantic -Wextra -std=c99 -O2
+CFLAGS=-Wall -Wpedantic -Wextra -std=c99 -O2
 
 .start:
 	mkdir -p $(OBJDIR)
 
 all: build
-	ld $(OBJDIR)($OBJ) -o $(TARGET)
+	$(CC) $(MAIN) $(OBJDIR)$(OBJ) -o $(TARGET)
 
 build: .start $(OBJ)
 
@@ -19,4 +20,4 @@ clean:
 	rm -rf $(OBJDIR) $(TARGET)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $< -o $(OBJDIR)$@
+	$(CC) $(CFLAGS) -c $< -o $(OBJDIR)$@

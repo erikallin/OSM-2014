@@ -36,7 +36,7 @@ int main() {
  liste->head = head;
  liste->tail = tail;
  printf("%p tail\n", liste->tail);
- printf("%p head\n", liste->head); 
+ printf("%p head\n", liste->head);
  insert(liste,i,1);
  insert(liste,k,0);
  printf("%p thing i tail\n",tail->thing);

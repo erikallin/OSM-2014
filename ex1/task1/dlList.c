@@ -29,13 +29,13 @@ item* search(dlist *this, bool (*matches(item*))) {
 
   while ((node*)((uintptr_t) next->ptr ^ (uintptr_t) prev)) {
     if (matches(next->thing))
-      return next->thing; 
+      return next->thing;
     node *tmp = next;
     next = (node*)((uintptr_t) next->ptr ^ (uintptr_t) prev);
     prev = tmp;
   }
    if (matches(this->tail->thing))
-      return next->thing; 
+      return next->thing;
 
   return 0;
 }
@@ -56,7 +56,7 @@ item* extract(dlist *this, bool atTail) {
    ext = this->tail->thing;
    address->ptr = (node*) ((uintptr_t)address->ptr  ^ (uintptr_t) this->tail);
    cleanup = this->tail;
-   this->tail = address; 
+   this->tail = address;
    free(cleanup);
    return ext;
 }
@@ -65,7 +65,7 @@ item* extract(dlist *this, bool atTail) {
    ext = this->head->thing;
    address->ptr = (node*) ((uintptr_t)address->ptr  ^ (uintptr_t) this->head);
    cleanup = this->head;
-   this->head = address; 
+   this->head = address;
    free(cleanup);
    return ext;
 }
