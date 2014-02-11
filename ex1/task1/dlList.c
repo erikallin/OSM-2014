@@ -18,14 +18,27 @@ void insert(dlist *this, item *thing, bool atTail) {
   }
 }
 
-/*
-item* search(dlist *this, bool (*matches(item*))) {
-  item *ret;
-  int *p = &this;
 
-  return ret;
+item* search(dlist *this, bool (*matches(item*))) {
+  if (matches(this->head->thing))
+    return this->head->thing;
+
+  node *prev = this->head;
+  node *next = this->head->ptr;
+
+  while ((int) next->ptr ^ (int) prev) {
+    if (matches(next->thing))
+      return next->thing;
+    if ((int)next->ptr ^ (int) prev) {
+    node *tmp = next;
+    next = (int) next->ptr ^ (int) prev;
+    prev = tmp;
+    }
+  }
+
+  return 0;
 }
-*/
+
 
 void reverse(dlist *this) {
   dlist *tmp = this;
@@ -75,6 +88,10 @@ int main() {
   head->thing = n;
   head->ptr = tail;
 
+  bool *match(item *a) {
+    return (a == 3);
+  }
+
  liste->head = head;
  liste->tail = tail;
  printf("%p tail\n", liste->tail);
@@ -85,6 +102,9 @@ int main() {
  printf("%d thing i nye tail\n",liste->tail->thing);
  printf("%p pointer i nye tail\n",liste->tail->ptr);
  printf("%p gamle tail (skal være lig pointer i nye tail)\n",tail);
+
+  printf("%d\n", search(liste, match(i)));
+
 /* test for extract */
 /* UDKOMMENTER FOR AT TESTE REVERSE; DEN VIL LAVE PRINT OM FRA 4,3,2,1 TIL 1,2,3,4 
   reverse(liste); */
