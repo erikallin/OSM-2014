@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "dlList.h"
 
 void insert(dlist *this, item *thing, bool atTail) {
@@ -8,12 +9,12 @@ void insert(dlist *this, item *thing, bool atTail) {
 
   if (atTail) {
     newNode->ptr = (this->tail);
-    this->tail->ptr = (node*)((int)this->tail->ptr ^ (int) newNode);
+    this->tail->ptr = (node*)((uintptr_t)this->tail->ptr ^ (uintptr_t) newNode);
     this->tail = newNode;
   }
   else {
     newNode->ptr = (this->head);
-    this->head->ptr =(node*) ((int)this->head->ptr ^ (int) newNode);
+    this->head->ptr = (node*)((uintptr_t)this->head->ptr ^ (uintptr_t) newNode);
     this->head = newNode;
   }
 }
@@ -26,11 +27,11 @@ item* search(dlist *this, bool (*matches(item*))) {
   node *prev = this->head;
   node *next = this->head->ptr;
 
-  while ((node*)((int) next->ptr ^ (int) prev)) {
+  while ((node*)((uintptr_t) next->ptr ^ (uintptr_t) prev)) {
     if (matches(next->thing))
       return next->thing; 
     node *tmp = next;
-    next = (node*)((int) next->ptr ^ (int) prev);
+    next = (node*)((uintptr_t) next->ptr ^ (uintptr_t) prev);
     prev = tmp;
   }
    if (matches(this->tail->thing))
@@ -53,7 +54,7 @@ item* extract(dlist *this, bool atTail) {
   if (atTail){
    address = this->tail->ptr;
    ext = this->tail->thing;
-   address->ptr = (node*) ((int)address->ptr  ^ (int) this->tail);
+   address->ptr = (node*) ((uintptr_t)address->ptr  ^ (uintptr_t) this->tail);
    cleanup = this->tail;
    this->tail = address; 
    free(cleanup);
@@ -62,7 +63,7 @@ item* extract(dlist *this, bool atTail) {
   else
    address = this->head->ptr;
    ext = this->head->thing;
-   address->ptr = (node*) ((int)address->ptr  ^ (int) this->head);
+   address->ptr = (node*) ((uintptr_t)address->ptr  ^ (uintptr_t) this->head);
    cleanup = this->head;
    this->head = address; 
    free(cleanup);
@@ -88,12 +89,16 @@ int main() {
   head->thing = n;
   head->ptr = tail;
 
- bool *eqthree(int a) {
-    return (bool*)(a == 1);
+ bool *eqone(int a) {
+   return (bool*)(a == 1);
   }
+
  bool *eqseven(int a) {
-    return (bool*)(a == 7);
+   return (bool*)(a == 7);
   }
+
+
+
  liste->head = head;
  liste->tail = tail;
  printf("%p tail\n", liste->tail);
@@ -105,8 +110,8 @@ int main() {
  printf("%p pointer i nye tail\n",liste->tail->ptr);
  printf("%p gamle tail (skal være lig pointer i nye tail)\n",tail);
 
-  printf("%p returner 3, hvis 3 er i listen (Er den)\n", search(liste, (item*)eqthree));
-  printf("%p returner nil, da 7 ikke er i listen\n",search(liste,(item*)eqseven));
+  printf("%p returner 1, hvis 1 er i listen (Er den)\n", search(liste, (item*)eqone));
+  printf("%p returner nil, da 7 ikke er i listen\n",search(liste, (item*)eqseven));
 /* test for extract */
 /* UDKOMMENTER FOR AT TESTE REVERSE; DEN VIL LAVE PRINT OM FRA 4,3,2,1 TIL 1,2,3,4 
   reverse(liste); */
@@ -120,6 +125,7 @@ int main() {
  printf("%p thing i nye head(1)\n",liste->head->thing);
 /* extract(liste,0);
  printf("%p thing i nye head\n",liste->head->thing); */
- 
+
+return 42; 
 }
 
