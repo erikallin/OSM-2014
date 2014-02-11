@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "dlList.h"
@@ -9,12 +8,12 @@ void insert(dlist *this, item *thing, bool atTail) {
 
   if (atTail) {
     newNode->ptr = (this->tail);
-    this->tail->ptr = (node*)((uintptr_t)this->tail->ptr ^ (uintptr_t) newNode);
+    this->tail->ptr = (node*)((uintptr_t)this->tail->ptr ^ (uintptr_t)newNode);
     this->tail = newNode;
   }
   else {
     newNode->ptr = (this->head);
-    this->head->ptr = (node*)((uintptr_t)this->head->ptr ^ (uintptr_t) newNode);
+    this->head->ptr = (node*)((uintptr_t)this->head->ptr ^ (uintptr_t)newNode);
     this->head = newNode;
   }
 }
@@ -34,8 +33,8 @@ item* search(dlist *this, bool (*matches(item*))) {
     next = (node*)((uintptr_t) next->ptr ^ (uintptr_t) prev);
     prev = tmp;
   }
-   if (matches(this->tail->thing))
-      return next->thing;
+  if (matches(this->tail->thing))
+    return next->thing;
 
   return 0;
 }
