@@ -19,7 +19,7 @@ void insert(dlist *this, item *thing, bool atTail) {
 }
 
 
-item* search(dlist *this, bool (*matches(item*))) {
+item* search(dlist *this, bool (*matches)(item*)) {
   if (matches(this->head->thing))
     return this->head->thing;
 

@@ -32,6 +32,7 @@ int main() {
   }
 
 
+ clock_t startInsert, endInsert;
 
  liste->head = head;
  liste->tail = tail;
@@ -44,17 +45,21 @@ int main() {
  printf("%p pointer i nye tail\n",liste->tail->ptr);
  printf("%p gamle tail (skal være lig pointer i nye tail)\n",tail);
 
-  printf("%p returner 1, hvis 1 er i listen (Er den)\n", search(liste, (item*)eqone));
-  printf("%p returner nil, da 7 ikke er i listen\n",search(liste, (item*)eqseven));
-/* test for extract */
-/* UDKOMMENTER FOR AT TESTE REVERSE; DEN VIL LAVE PRINT OM FRA 4,3,2,1 TIL 1,2,3,4 
-  reverse(liste); */
+  printf("%p returner 1, hvis 1 er i listen (Er den)\n",
+      search(liste, (item*)eqone));
+  printf("%p returner nil, da 7 ikke er i listen\n",
+      search(liste, (item*)eqseven));
+
+  /* test for extract */
+  /* UDKOMMENTER FOR AT TESTE REVERSE;
+   * DEN VIL LAVE PRINT OM FRA 4,3,2,1 TIL 1,2,3,4 reverse(liste);
+   */
  printf("FØLGENDE ER TEST FOR EXTRACT\n");
  printf("%p thing i head (4)\n",liste->head->thing);
  extract(liste,0);
  printf("%p thing i nye head(3)\n",liste->head->thing);
  extract(liste,0);
- printf("%p thing i nye head(2)\n",liste->head->thing); 
+ printf("%p thing i nye head(2)\n",liste->head->thing);
  extract(liste,0);
  printf("%p thing i nye head(1)\n",liste->head->thing);
 /* extract(liste,0);
