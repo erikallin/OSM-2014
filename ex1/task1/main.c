@@ -23,27 +23,38 @@ int main() {
   head->thing = n;
   head->ptr = tail;
 
- bool *eqone(int a) {
-   return (bool*)(a == 1);
+  bool *eqone(int a) {
+    return (bool*)(a == 1);
   }
 
- bool *eqseven(int a) {
-   return (bool*)(a == 7);
+  bool *eqseven(int a) {
+    return (bool*)(a == 7);
   }
 
 
- clock_t startInsert, endInsert;
+  clock_t startInsert1, startInsertAll, endInsert1, endInsertAll;
 
- liste->head = head;
- liste->tail = tail;
- printf("%p tail\n", liste->tail);
- printf("%p head\n", liste->head);
- insert(liste,i,1);
- insert(liste,k,0);
- printf("%p thing i tail\n",tail->thing);
- printf("%p thing i nye tail\n",liste->tail->thing);
- printf("%p pointer i nye tail\n",liste->tail->ptr);
- printf("%p gamle tail (skal være lig pointer i nye tail)\n",tail);
+  liste->head = head;
+  liste->tail = tail;
+  printf("%p tail\n", liste->tail);
+  printf("%p head\n", liste->head);
+  startInsert1 = clock();
+  startInsertAll = clock();
+  insert(liste,i,1);
+  endInsert1 = clock();
+  insert(liste,k,0);
+  endInsertAll = clock();
+
+  printf("Insert time: %f\n",
+      (double)(endInsert1 - startInsert1) / CLOCKS_PER_SEC);
+
+  printf("Insert time all: %f\n",
+      (double)(endInsertAll - startInsertAll) / CLOCKS_PER_SEC);
+
+  printf("%p thing i tail\n",tail->thing);
+  printf("%p thing i nye tail\n",liste->tail->thing);
+  printf("%p pointer i nye tail\n",liste->tail->ptr);
+  printf("%p gamle tail (skal være lig pointer i nye tail)\n",tail);
 
   printf("%p returner 1, hvis 1 er i listen (Er den)\n",
       search(liste, (item*)eqone));
