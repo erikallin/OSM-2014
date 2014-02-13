@@ -27,6 +27,7 @@ item* search(dlist *this, bool (*matches)(item*)) {
   node *next = this->head->ptr;
 
   while ((node*)((uintptr_t)next->ptr ^ (uintptr_t)prev)) {
+    printf("%p\n",next->thing);
     if (matches(next->thing))
       return next->thing;
     node *tmp = next;

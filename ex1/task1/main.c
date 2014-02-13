@@ -42,8 +42,25 @@ int main() {
   startInsertAll = clock();
   insert(liste,i,1);
   endInsert1 = clock();
+  insert(liste,i,1);
+  insert(liste,i,1);
+  insert(liste,i,1);
+  insert(liste,i,1);
+  insert(liste,i,1);
+  insert(liste,k,0);
+  insert(liste,k,1);
+  insert(liste,k,1);
+  insert(liste,k,0);
   insert(liste,k,0);
   endInsertAll = clock();
+
+  int counter = 0;
+
+  bool *fuck(int a) {
+    return (a == -1);
+  }
+
+  search(liste,fuck);
 
   printf("Insert time: %f\n",
       (double)(endInsert1 - startInsert1) / CLOCKS_PER_SEC);
