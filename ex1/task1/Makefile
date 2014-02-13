@@ -1,5 +1,5 @@
 MAIN=main.c
-SOURCE=dlList.c# main.c
+SOURCE=dlList.c
 TARGET=dlList
 
 OBJ=$(SOURCE:.c=.o)
@@ -11,7 +11,7 @@ CFLAGS=-Wall -Wpedantic -Wextra -std=c99 -O2
 .start:
 	mkdir -p $(OBJDIR)
 
-all: build
+all:
 	$(CC) $(MAIN) $(OBJDIR)$(OBJ) -o $(TARGET)
 
 build: .start $(OBJ)
