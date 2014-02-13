@@ -40,6 +40,16 @@
 #include "lib/libc.h"
 #include "kernel/assert.h"
 
+int syscall_read(int fhandle, void *buffer, int length) {
+  kread("hej",4);
+  return -1;
+}
+
+int syscall_write(int fhandle, const void *buffer, int length) {
+  kprintf("top lelz");
+  return -1;
+}
+
 /**
  * Handle system calls. Interrupts are enabled when this function is
  * called.
@@ -49,6 +59,9 @@
  */
 void syscall_handle(context_t *user_context)
 {
+
+char buffer[100];// = kmalloc(sizeof(char) * 10);
+
     /* When a syscall is executed in userland, register a0 contains
      * the number of the syscall. Registers a1, a2 and a3 contain the
      * arguments of the syscall. The userland code expects that after
@@ -63,7 +76,7 @@ void syscall_handle(context_t *user_context)
         halt_kernel();
         break;
     case SYSCALL_READ:
-        syscall_read(42, 10, 30);
+        syscall_read(1, 2, 3);
         break;
     default:
         KERNEL_PANIC("Unhandled system call\n");
@@ -72,3 +85,5 @@ void syscall_handle(context_t *user_context)
     /* Move to next instruction after system call */
     user_context->pc += 4;
 }
+
+

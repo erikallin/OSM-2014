@@ -61,4 +61,7 @@
 #define FILEHANDLE_STDOUT 1
 #define FILEHANDLE_STDERR 2
 
+int syscall_read(int fhandle, void *buffer, int length);
+int syscall_write(int fhandle, const void *buffer, int length);
+
 #endif

@@ -38,6 +38,7 @@
 
 int main(void)
 {
+    syscall_read();
     syscall_halt();
 
     return 0;

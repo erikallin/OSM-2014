@@ -152,7 +152,7 @@ int syscall_read(int filehandle, void *buffer, int length)
 int syscall_seek(int filehandle, int offset)
 {
     return (int)_syscall(SYSCALL_SEEK,
-			 (uint32_t)filehandle, (uint32_t)offset, 0);
+      (uint32_t)filehandle, (uint32_t)offset, 0);
 }
 
 
