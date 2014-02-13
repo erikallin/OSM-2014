@@ -4,7 +4,7 @@
 MODULE := proc
 
 
-FILES := exception.c elf.c process.c syscall.c
+FILES := exception.c elf.c process.c syscall.c io.h io.c
 
 SRC += $(patsubst %, $(MODULE)/%, $(FILES))
 
