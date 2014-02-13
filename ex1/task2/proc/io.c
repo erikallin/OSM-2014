@@ -37,6 +37,7 @@ KERNEL_ASSERT(gcd != NULL);
 
 
 /* iflg. drivers/gcd.h, læser read, "at most len bytes from the device to the buffer. the function returns the number of bytes read." */
+
 return gcd->read(gcd,buffer,length);
 }
 return -1;
@@ -52,10 +53,10 @@ gcd_t *gcd;
 
 /* Skaffer device */
 dev = device_get(YAMS_TYPECODE_TTY,0);
-//KERNEL_ASSERT(dev != NULL);
+KERNEL_ASSERT(dev != NULL);
 /* skaffer generisk device fra device */
 gcd = (gcd_t *)dev->generic_device;
-//KERNEL_ASSERT(gcd != NULL);
+KERNEL_ASSERT(gcd != NULL);
 
 
 /* iflg. drivers/gcd.h, skriver write, "at most len bytes from the buffer to the device. the function returns the number of bytes read." */

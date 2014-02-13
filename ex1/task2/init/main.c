@@ -33,7 +33,7 @@
  * $Id: main.c,v 1.25 2006/01/13 05:44:34 jaatroko Exp $
  *
  */
-
+  #include "proc/io.h"
 #include "drivers/bootargs.h"
 #include "drivers/device.h"
 #include "drivers/gcd.h"
@@ -76,8 +76,12 @@ void init_startup_fallback(void) {
         gcd_t *gcd;
         char buffer[64];
         char buffer2[64];
+        char buffer3[64];
         int len;
-
+        //Test for read og write 
+        syscall_read(0,buffer3,63);
+        syscall_write(1, buffer3, 63);
+ 
 	DEBUG("debuginit", "In console test\n");
 
         /* Find system console (first tty) */
@@ -99,11 +103,12 @@ void init_startup_fallback(void) {
         gcd->write(gcd, buffer, len);
 
 	DEBUG("debuginit", "Console test done, %d bytes written\n", len);
+        
     }
 
     /* Nothing else to do, so we shut the system down. */
     kprintf("Startup fallback code ends.\n");
-    halt_kernel();
+halt_kernel();
 }
 
 /**
