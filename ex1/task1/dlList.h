@@ -2,7 +2,7 @@
 #define DL_LIST_H
 
 typedef int bool;
-typedef void item; /* We store pointers, cuz why not? */
+typedef void item;
 
 typedef struct node_ {
   item           *thing;
