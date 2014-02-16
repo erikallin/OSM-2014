@@ -39,7 +39,7 @@
 #include "kernel/panic.h"
 #include "lib/libc.h"
 #include "kernel/assert.h"
-#include "proc/io.h"
+#include "fs/io.h"
 
 /**
  * Handle system calls. Interrupts are enabled when this function is

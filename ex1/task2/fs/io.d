@@ -1,4 +1,4 @@
-init/main.o: init/main.c drivers/bootargs.h drivers/device.h lib/types.h \
+fs/io.o: fs/io.c drivers/bootargs.h drivers/device.h lib/types.h \
  drivers/yams.h drivers/gcd.h drivers/metadev.h kernel/spinlock.h \
  drivers/polltty.h fs/vfs.h drivers/gbd.h lib/libc.h kernel/semaphore.h \
  kernel/thread.h kernel/cswitch.h vm/pagetable.h vm/tlb.h proc/process.h \
