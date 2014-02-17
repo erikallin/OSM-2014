@@ -93,14 +93,15 @@ Tager en pointer til en boolsk funktion som allerede er defineret og løber list
 Vi kan løbe igennem listen, da vi altid kender addressen på det tidligere element, og derfor kan bruge next = ptr $\wedge$ prev, til at finde det næste element. ptr er her pointeren gemt inde i det nuværende element. 
 
 \subsection*{reverse}
-Denne bytter rundt på head og tail i strukturen dlist. Dette virker, da vi har:\\
+Denne bytter rundt på head og tail i strukturen dlist. Dette virker, da vi har:
+\\
 next = ptr $\wedge$ prev. Så uanset hvilken side man starter fra, vil man finde det næste element, da man ikke i praksis kan se forskel på hvad vej man går igennem listen.
 
 \subsection*{Testing}
-For at teste listen har vi lavet filen main.c. Hvad der bliver og testet og hvordan den gør det ses tydeligt af filen. For at make strukturen køres \textbf{make build all} og for at bygge main.c køres \textbf{make}. Af testen ser vi at strukturen fungerer og alle funktionaliteterne gør som forventet.
+For at teste listen har vi lavet filen \nameref{main.c}. Hvad der bliver og testet og hvordan den gør det ses tydeligt af filen. For at make strukturen køres \textbf{make build all} og for at bygge main.c køres \textbf{make}. Af testen ser vi at strukturen fungerer og alle funktionaliteterne gør som forventet.
 
 \section*{Task 2}
-\textbf{Filer involveret:} fs/\texttt{io.c}, fs/\texttt{io.h} samt tests/\texttt{readwrite.c}.
+\textbf{Filer involveret:} fs/\texttt{\nameref{io.c}}, fs/\texttt{\nameref{io.h}} samt tests/\texttt{\nameref{readwrite.c}}.
 \\[5px]
 I denne opgave, udnyttede vi os af typen device fra drivers, som tillod os at bruge kernel-kaldene read og write. Vi skulle altså lave en driver pointer. 
 \\
@@ -108,10 +109,10 @@ Da device-strukturen har et generisk device i sin struktur, kan vi udnytte den G
 \\
 I forbindelse med dette bruger vi kernel assert til at sikre os, at vi peger på et device.
 \\
-At \texttt{io.c} og \texttt{io.h} ligger i mappen fs, er taget fra buenos roadmap, som har inddelt read og write som systemkald, der relaterer til filsystemer. som beskrevet i buenos roadmap, side 44. 
+At \texttt{\nameref{io.c}} og \texttt{\nameref{io.h}} ligger i mappen fs, er taget fra buenos roadmap, som har inddelt read og write som systemkald, der relaterer til filsystemer. som beskrevet i buenos roadmap, side 44. 
 \\
 \subsection*{Testing}
-For at teste readwrite, lavede vi filen readwrite.c i mappen tests0.
+For at teste readwrite, lavede vi filen \nameref{dlList.c} i mappen tests. 
 \\
 Efter at have compilet denne, lavede vi:
 \\
@@ -134,6 +135,7 @@ C kan dog sagtens se chars som integers.
 \section*{Bilag}
 
 \section*{dlList.c}
+\label{dlList.c}
 \begin{lstlisting}
 #include <stdlib.h>
 #include <stdint.h>
@@ -213,7 +215,7 @@ item* extract(dlist *this, bool atTail) {
 \end{lstlisting}
 \newpage
 
-\section*{dlList.h}
+\section*{dlList.h}\label{dlList.h}
 \begin{lstlisting}
 #ifndef DL_LIST_H
 #define DL_LIST_H
@@ -245,7 +247,7 @@ item* search(dlist *this, bool (*matches)(item*));
 \end{lstlisting}
 \newpage
 
-\section*{main.c}
+\section*{main.c}\label{main.c}
 \begin{lstlisting}
 #include <stdio.h>
 #include <stdlib.h>
@@ -370,7 +372,7 @@ int main() {
 \end{lstlisting}
 \newpage
 
-\section*{io.h}
+\section*{io.h}\label{io.h}
 \begin{lstlisting}
 #ifndef IO_H
 #define IO_H
@@ -382,7 +384,7 @@ int syscall_write(int fhandle, const void *buffer, int length);
 \end{lstlisting}
 \newpage
 
-\section*{io.c}
+\section*{io.c}\label{io.c}
 \begin{lstlisting}
 #include "drivers/bootargs.h"
 #include "drivers/device.h"
@@ -457,7 +459,7 @@ int syscall_write(int fhandle, const void *buffer, int length) {
 \end{lstlisting}
 \newpage
 
-\section*{readwrite.c}
+\section*{readwrite.c} \label{readwrite.c}
 \begin{lstlisting}
 #include "lib.h"
 int main(void) {
