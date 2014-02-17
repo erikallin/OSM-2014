@@ -50,10 +50,14 @@
 
 
 \section*{Task 1}
-
+\subsection*{Insert}
+lol1
+\subsection*{Extract}
+lol2
+\subsection*{Search}
 
 \section*{Task 2}
-\textbf{Filer involveret:} fs/\textbf{io.c}, fs/\textbf{io.h} samt tests/\textbf{readwrite.c}.
+\textbf{Filer involveret:} fs/\texttt{io.c}, fs/\texttt{io.h} samt tests/\texttt{readwrite.c}.
 \\[5px]
 I denne opgave, udnyttede vi os af typen device fra drivers, som tillod os at bruge kernel-kaldene read og write. Vi skulle altså lave en driver pointer. 
 \\
@@ -61,22 +65,22 @@ Da device-strukturen har et generisk device i sin struktur, kan vi udnytte den G
 \\
 I forbindelse med dette bruger vi kernel assert til at sikre os, at vi peger på et device.
 \\
-At \textbf{io.c} og \textbf{io.h} ligger i mappen fs, er taget fra buenos roadmap, som har inddelt read og write som systemkald, der relaterer til filsystemer. som beskrevet i buenos roadmap, side 44. 
+At \texttt{io.c} og \texttt{io.h} ligger i mappen fs, er taget fra buenos roadmap, som har inddelt read og write som systemkald, der relaterer til filsystemer. som beskrevet i buenos roadmap, side 44. 
 \\
 \subsection*{Testing}
 For at teste readwrite, lavede vi filen readwrite.c i mappen tests0.
 \\
 Efter at have compilet denne, lavede vi:
 \\
-\textbf{util/tfstool create fyams.harddisk 2048 disk1}
+\texttt{util/tfstool create fyams.harddisk 2048 disk1}
 \\
 og
 \\
-\textbf{util/tfstool write fyams.harddisk tests/readwrite readwrite}
+\texttt{util/tfstool write fyams.harddisk tests/readwrite readwrite}
 \\[5px]
 Når dette er lavet. kan testen køres med kommandoen: 
 \\
-\textbf{fyams-sim buenos 'initprog=[disk1]readwrite'}
+\texttt{fyams-sim buenos 'initprog=[disk1]readwrite'}
 \\
 Når dette er startet er det muligt at taste i terminalen, hvorefter read så læser det du skriver, og write skriver det ud til terminalen igen. 
 \\
