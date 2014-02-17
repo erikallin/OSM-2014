@@ -12,6 +12,38 @@
 \usepackage{listings} %Til pæn C-kode
 \lstset{language=C} %Definerer sproget
 
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+%  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
 \usepackage{amssymb}
 %Danske symboler
 \usepackage[danish]{babel}
@@ -51,10 +83,12 @@
 
 \section*{Task 1}
 \subsection*{Insert}
-lol1
+Da en \texttt{doubly linked list} består af pointere til \texttt{nodes}, som består af en \texttt{item} og en pointer, skal listens pointere opdateres samt at pointerne i noderne skal opdateres. Da man kun har en pointer i noderne, så skal man finde den næste, eller forrige, vha. \texttt{xor} mellem den nuværende nodes adresse og den forrige, eller næste, nodes adresse.
 \subsection*{Extract}
-lol2
+Tager enten det første eller sidste element i listen, opdaterer listens pointere og frigører elementets plads.
 \subsection*{Search}
+Tager en pointer til en boolsk funktion som allerede er defineret og løber listen igennem enten til at den finder en match eller til at der ikke er flere elementer, hvor den så vil returnere -1.
+
 
 \section*{Task 2}
 \textbf{Filer involveret:} fs/\texttt{io.c}, fs/\texttt{io.h} samt tests/\texttt{readwrite.c}.
@@ -103,13 +137,13 @@ void insert(dlist *this, item *thing, bool atTail) {
   if (atTail) {
     newNode->ptr = (this->tail);
     this->tail->ptr = (node*)((uintptr_t)this->tail->
-    ptr ^ (uintptr_t)newNode);
+      ptr ^ (uintptr_t)newNode);
     this->tail = newNode;
   }
   else {
     newNode->ptr = (this->head);
     this->head->ptr = (node*)((uintptr_t)this->head->
-    ptr ^ (uintptr_t)newNode);
+      ptr ^ (uintptr_t)newNode);
     this->head = newNode;
   }
 }
@@ -213,25 +247,25 @@ item* search(dlist *this, bool (*matches)(item*));
 
 int main() {
 
- // Tildeler memory/plads til listen samt dens head og tail.
+  // Tildeler memory/plads til listen samt dens head og tail.
   node *tail = malloc(sizeof(node));
   node *head = malloc(sizeof(node));
   dlist *liste = malloc(sizeof(dlist));
 
- /* Tildeler memory/plads til de elementer, 
-    der senere bliver indsat via insert. */
+  /* Tildeler memory/plads til de elementer, 
+     der senere bliver indsat via insert. */
   int *i = malloc(sizeof(int));
   int *j = malloc(sizeof(int));
   int *n = malloc(sizeof(int));
   int *k = malloc(sizeof(int));
 
- // Vaerdier for elementer der senere bliver indsat.
+  // Vaerdier for elementer der senere bliver indsat.
   i = (int*)1;
   j = (int*)2;
   n = (int*)3;
   k = (int*)4;
 
- // Tail og head tildeles vaerdier.
+  // Tail og head tildeles vaerdier.
   tail->thing = j;
   tail->ptr = head;
 
@@ -253,20 +287,21 @@ int main() {
   clock_t startInsert1, startInsertAll, endInsert1, endInsertAll;
 
 
- /* Head og tail tildeles deres pladser i listen.
-    Der tjekkes herudover, om de har de korrekte vaerdier 
-    via et print. */
+  /* Head og tail tildeles deres pladser i listen.
+     Der tjekkes herudover, om de har de korrekte vaerdier 
+     via et print. */
   liste->head = head;
   liste->tail = tail;
   printf("Tail: %p\n", liste->tail);
   printf("Head: %p\n", liste->head);
 
 
- /* Der saettes en clock for at tjekke programmets hidtige koeretid,
-    og der bliver indsat en raekke elementer.
-    Senere saettes der to "slut" clocks, der senere 
-    bruges til at tjekke tiden det har taget
-    at indsaette elementerne. */
+  /* Der saettes en clock for at tjekke programmets 
+     hidtige koeretid,
+     og der bliver indsat en raekke elementer.
+     Senere saettes der to "slut" clocks, der senere 
+     bruges til at tjekke tiden det har taget
+     at indsaette elementerne. */
   startInsert1 = clock();
   startInsertAll = clock();
   insert(liste, i, 1);
@@ -283,25 +318,25 @@ int main() {
 
 
   printf("Insertion time for 1 element: %f\n",
-  (double)(endInsert1 - startInsert1) / CLOCKS_PER_SEC);
+    (double)(endInsert1 - startInsert1) / CLOCKS_PER_SEC);
 
   printf("Insertion time for alle elementer: %f\n",
-  (double)(endInsertAll - startInsertAll) / CLOCKS_PER_SEC);
+    (double)(endInsertAll - startInsertAll) / CLOCKS_PER_SEC);
 
   printf("%p vaerdi af thing i tail\n",tail->thing);
   printf("%p vaerdi af thing i nye tail\n",liste->tail->thing);
 
- /* Denne test er ikke korrekt. Slet eller fix
+  /* Denne test er ikke korrekt. Slet eller fix
   printf("%p pointer i nye tail\n",liste->tail->ptr);
   printf("%p gamle tail (skal vaere lig pointer i nye tail)\n",tail);
- */
+  */
 
   printf("Tester om 1 er i listen. Returner %p, 
-  hvilket betyder at den er der.\n",
-  search(liste, (item*)eqone));
+    hvilket betyder at den er der.\n",
+    search(liste, (item*)eqone));
   printf("Tester om 7 er i listen. Returner %p, 
-  hvilket betyder at den ikke er det.\n",
-  search(liste, (item*)eqseven));
+    hvilket betyder at den ikke er det.\n",
+    search(liste, (item*)eqseven));
 
 
   // Udkommenter for at teste reverse
@@ -310,16 +345,16 @@ int main() {
   */
   printf("\n Foelgende er test for extract\n");
   printf("%p er thing i head (rigtigt hvis = 4)\n",
-  liste->head->thing);
+    liste->head->thing);
   extract(liste,0);
   printf("%p er nu thing i nye head (rigtigt hvis = 3)\n",
-  liste->head->thing);
+    liste->head->thing);
   extract(liste,0);
   printf("%p er nu thing i nye head (rigtigt hvis = 2)\n",
-  liste->head->thing);
+    liste->head->thing);
   extract(liste,0);
   printf("%p er nu thing i nye head (rigtigt hvis = 1)\n",
-  liste->head->thing);
+    liste->head->thing);
 
   return 0;
 }
@@ -366,49 +401,50 @@ int syscall_write(int fhandle, const void *buffer, int length);
 
 
 int syscall_read(int fhandle, void *buffer, int length) {
-if(fhandle == 0) {
-device_t *dev;
-gcd_t *gcd;
+  if(fhandle == 0) {
+    device_t *dev;
+    gcd_t *gcd;
 
-/* Skaffer device */
-dev = device_get(YAMS_TYPECODE_TTY,0);
-KERNEL_ASSERT(dev != NULL);
-/* skaffer generisk device fra device */
-gcd = (gcd_t *)dev->generic_device;
-KERNEL_ASSERT(gcd != NULL);
+    /* Skaffer device */
+    dev = device_get(YAMS_TYPECODE_TTY,0);
+    KERNEL_ASSERT(dev != NULL);
+    /* skaffer generisk device fra device */
+    gcd = (gcd_t *)dev->generic_device;
+    KERNEL_ASSERT(gcd != NULL);
 
 
-/* Ifoelge drivers/gcd.h, laeser read, "at most len bytes 
-from the device to the buffer. the function returns 
-the number of bytes read." */
+    /* Ifoelge drivers/gcd.h, laeser read, "at most len bytes 
+       from the device to the buffer. the function returns 
+       the number of bytes read." */
 
-return gcd->read(gcd,buffer,length);
+    return gcd->read(gcd,buffer,length);
+  }
+  return -1;
+
+  /*int tmp = fhandle;
+  int tmp2 =(int) buffer;
+  int tmp3 = length; */
 }
-return -1;
 
-/*int tmp = fhandle;
-int tmp2 =(int) buffer;
-int tmp3 = length; */
-}
 int syscall_write(int fhandle, const void *buffer, int length) {
-if(fhandle == 1) {
-device_t *dev;
-gcd_t *gcd;
+  if(fhandle == 1) {
+    device_t *dev;
+    gcd_t *gcd;
 
-/* Skaffer device */
-dev = device_get(YAMS_TYPECODE_TTY,0);
-KERNEL_ASSERT(dev != NULL);
-/* skaffer generisk device fra device */
-gcd = (gcd_t *)dev->generic_device;
-KERNEL_ASSERT(gcd != NULL);
+    /* Skaffer device */
+    dev = device_get(YAMS_TYPECODE_TTY,0);
+    KERNEL_ASSERT(dev != NULL);
+    /* skaffer generisk device fra device */
+    gcd = (gcd_t *)dev->generic_device;
+    KERNEL_ASSERT(gcd != NULL);
 
 
-/* Ifoelge drivers/gcd.h, skriver write, 
-"at most len bytes from the buffer to the device. 
-The function returns the number of bytes read." */
-return gcd->write(gcd,buffer,length);
-}
-return -1;
+    /* Ifoelge drivers/gcd.h, skriver write, 
+       "at most len bytes from the buffer to the device. 
+       The function returns the number of bytes read." */
+    return gcd->write(gcd,buffer,length);
+  }
+  return -1;
 }
 \end{lstlisting}
 \newpage
@@ -416,12 +452,11 @@ return -1;
 \section*{readwrite.c}
 \begin{lstlisting}
 #include "lib.h"
-int main(void)
-{
- int a[100];
-    syscall_read(0,a,100); 
-    syscall_write(1,a,100);
- return 0;
+int main(void) {
+  int a[100];
+  syscall_read(0, a, 100); 
+  syscall_write(1, a, 100);
+  return 0;
 }
 \end{lstlisting}
 
