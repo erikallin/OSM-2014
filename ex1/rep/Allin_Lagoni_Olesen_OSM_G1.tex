@@ -84,14 +84,17 @@
 \section*{Task 1}
 \subsection*{Insert}
 Da en \texttt{doubly linked list} består af pointere til \texttt{nodes}, som består af en \texttt{item} og en pointer, skal listens pointere opdateres samt at pointerne i noderne skal opdateres. Da man kun har en pointer i noderne, så skal man finde den næste, eller forrige, vha. \texttt{xor} mellem den nuværende nodes adresse og den forrige, eller næste, nodes adresse.
+
 \subsection*{Extract}
 Denne fjerner det første eller sidste element i listen, alt efter om atTail er 1 eller 0. Den fjerner så dette element og opdatere pointeren for næste element i listen. Derefter frigørers det gamle  elements plads.
+
 \subsection*{Search}
-Tager en pointer til en boolsk funktion som allerede er defineret og løber listen igennem enten til at den finder en match eller til at der ikke er flere elementer, hvor den så vil returnere -1.
-Vi kan løbe igennem listen, da vi altid kender addressen på det tidligere element, og derfor kan bruge next = ptr hat  prev, til at finde det næste element. ptr er her pointeren gemt inde i det nuværende element.
+Tager en pointer til en boolsk funktion som allerede er defineret og løber listen igennem enten til at den finder en match eller til at der ikke er flere elementer, hvor den så vil returnere -1. 
+Vi kan løbe igennem listen, da vi altid kender addressen på det tidligere element, og derfor kan bruge next = ptr $\wedge$ prev, til at finde det næste element. ptr er her pointeren gemt inde i det nuværende element. 
+
 \subsection*{reverse}
 Denne bytter rundt på head og tail i strukturen dlist. Dette virker, da vi har:\\
-next = ptr hat prev. Så uanset hvilken side man starter fra, vil man finde det næste element, da man ikke i praksis kan se forskel på hvad vej man går igennem listen.
+next = ptr $\wedge$ prev. Så uanset hvilken side man starter fra, vil man finde det næste element, da man ikke i praksis kan se forskel på hvad vej man går igennem listen.
 
 \subsection*{Testing}
 For at teste listen har vi lavet filen main.c. Hvad der bliver og testet og hvordan den gør det ses tydeligt af filen. For at make strukturen køres \textbf{make build all} og for at bygge main.c køres \textbf{make}. Af testen ser vi at strukturen fungerer og alle funktionaliteterne gør som forventet.
