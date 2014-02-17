@@ -8,20 +8,8 @@
 \usepackage{hyperref}
 \usepackage{listings,xcolor}
 \usepackage[vlined, ruled, linesnumbered]{algorithm2e}
-\usepackage{pdfpages}
-%Til at indsætte pdf'er
+\usepackage{pdfpages} %Til at indsætte pdf'er
 
-\definecolor{dkgreen}{rgb}{0,.6,0}
-\definecolor{dkblue}{rgb}{0,0,.6}
-\definecolor{dkyellow}{cmyk}{0,0,.8,.3}
-
-\hypersetup{
-    colorlinks,
-    citecolor=cyan,
-    filecolor=cyan,
-    linkcolor=cyan,
-    urlcolor=cyan
-}
 \usepackage{amssymb}
 %Danske symboler
 \usepackage[danish]{babel}
@@ -58,28 +46,40 @@
 
 % let's begin
 
-\section{Rapport lolz}
-\section{Task2}
-Filer involveret:
-fs/io.c, fs/io.h, \\
-test/readwrite.\\
 
-I denne opgave, udnyttede typen device, fra drivers, som tillod os at bruge kernel kaldene read og write. Vi skulle altså lave en driver pointer.
-Da device strukturen har et generisk device i sin struktur, og vi kan se af GCD, at den har henholdsvist read og write, som gør nøjagtig det vi ønsker.
-Kan vi udnytte den GCD vi har lavet.
-I forbindelse med dette bruger vi kernel assert til at sikre os at vi peger på et device.\\
-At io.c og io.h ligger i mappen fs, er taget fra buenos roadmap, som har inddelt read og write som systemkald der relatere til filsystemer. som beskrevet på buenos roadmap side 44. 
+
+\section*{Task 1}
+
+\section*{Task 2}
+\textbf{Filer involveret:} fs/\textbf{io.c}, fs/\textbf{io.h} samt tests/\textbf{readwrite.c}.
+\\[5px]
+I denne opgave, udnyttede vi os af typen device fra drivers, som tillod os at bruge kernel-kaldene read og write. Vi skulle altså lave en driver pointer. 
+\\
+Da device-strukturen har et generisk device i sin struktur, kan vi udnytte den GCD vi har lavet. Vi kan nemlig se af GCD, at den har henholdsvis read og write, som gør nøjagtigt det vi ønsker. 
+\\
+I forbindelse med dette bruger vi kernel assert til at sikre os, at vi peger på et device.
+\\
+At \textbf{io.c} og \textbf{io.h} ligger i mappen fs, er taget fra buenos roadmap, som har inddelt read og write som systemkald, der relaterer til filsystemer. som beskrevet i buenos roadmap, side 44. 
 \\
 \subsection{Testing}
-For at teste readwrite, lavede vi filen readwrite.c i mappen tests/. \ref{test}
-Efter at have compilet denne, lavede vi\\
-util/tfstool create fyams.harddisk 2048 disk1\\
-util/tfstool write fyams.harddisk tests/readwrite readwrite\\
+For at teste readwrite, lavede vi filen readwrite.c i mappen tests0.
 \\
-Når dette er lavet. kan testen køres med:\\
-fyams-sim buenos 'initprog=[disk1]readwrite'\\
-Når dette er startet kan man taste i termialen og så læser read det du skriver, og write skriver det ud til terminalen igen.\\
-I vores test er der brugt en int buffer, dette betyder at alt fylder 4 bytes, så der kan altså ikke læses 63 chars, men derimod kun en fjerde del. \\
-C kan dog sagtens anse chars som integers.\\
+Efter at have compilet denne, lavede vi:
+\\
+\textbf{util/tfstool create fyams.harddisk 2048 disk1}
+\\
+og
+\\
+\textbf{util/tfstool write fyams.harddisk tests/readwrite readwrite}
+\\[5px]
+Når dette er lavet. kan testen køres med kommandoen: 
+\\
+\textbf{fyams-sim buenos 'initprog=[disk1]readwrite'}
+\\
+Når dette er startet er det muligt at taste i terminalen, hvorefter read så læser det du skriver, og write skriver det ud til terminalen igen. 
+\\
+I vores test er der brugt en int buffer. Dette betyder, at alt fylder 4 bytes, så der kan altså ikke læses 63 chars, men derimod kun en fjerdedel. 
+\\
+C kan dog sagtens se chars som integers.
 
 \end{document}
