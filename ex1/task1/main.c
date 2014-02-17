@@ -33,7 +33,6 @@ int main() {
   head->ptr = tail;
 
   // Funktioner for at teste om bestemte værdier findes i dllist via search.
-  // Kaster warns
   bool *eqone(int a) {
     return (bool*)(a == 1);
   }
