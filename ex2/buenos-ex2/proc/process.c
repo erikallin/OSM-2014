@@ -40,6 +40,7 @@
 #include "kernel/assert.h"
 #include "kernel/interrupt.h"
 #include "kernel/config.h"
+#include "kernel/kmalloc.h"
 #include "fs/vfs.h"
 #include "drivers/yams.h"
 #include "vm/vm.h"
@@ -189,7 +190,10 @@ void process_start(const char *executable)
 }
 
 void process_init() {
-  KERNEL_PANIC("Not implemented.");
+  kmalloc_init();
+  process_table = kmalloc(32*sizeof(process_control_block_t));
+  kmalloc_disable();
+  //KERNEL_PANIC("Not implemented.");
 }
 
 process_id_t process_spawn(const char *executable) {

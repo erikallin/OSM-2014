@@ -50,7 +50,7 @@ void process_start(const char *executable);
 
 typedef struct {
   /* STUB: Put something here. */
-  int dummy; /* Remove this. */
+  process_id_t process_list;
 } process_control_block_t;
 
 /* Initialize the process table.  This must be called during kernel
