@@ -193,9 +193,9 @@ void process_start(const char *executable)
 /* Sets every entry in the table to free */
 void process_init() {
   for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
-    process_table[i]->zombie = 0;
-    process_table[i]->running = 0;
-    process_table[i]->dead = 1;
+    (process_table[i])->zombie = 0;
+    (process_table[i])->running = 0;
+    (process_table[i])->dead = 1;
   }
 }
 
@@ -233,6 +233,8 @@ int process_join(process_id_t pid) {
   //TODO vent på processen er færdig (med sleepQ)
 
   sleepq_add(process_table[tablePlace]);
+
+  thread_switch();
 
   process_table[tablePlace]->dead = 1;
 
