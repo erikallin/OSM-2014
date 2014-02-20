@@ -40,7 +40,6 @@
 #include "kernel/assert.h"
 #include "kernel/interrupt.h"
 #include "kernel/config.h"
-#include "kernel/kmalloc.h"
 #include "fs/vfs.h"
 #include "drivers/yams.h"
 #include "vm/vm.h"
@@ -189,11 +188,14 @@ void process_start(const char *executable)
     KERNEL_PANIC("thread_goto_userland failed.");
 }
 
+/* Sets every entry in the table to free */
 void process_init() {
-  kmalloc_init();
-  process_table = kmalloc(32*sizeof(process_control_block_t));
-  kmalloc_disable();
-  //KERNEL_PANIC("Not implemented.");
+  for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
+    process_table[i]->free = 1;
+    process_table[i]->zombie = 0;
+    process_table[i]->running = 0;
+    process_table[i]->dead = 0;
+  }
 }
 
 process_id_t process_spawn(const char *executable) {
@@ -211,7 +213,9 @@ void process_finish(int retval) {
 int process_join(process_id_t pid) {
   pid=pid;
   KERNEL_PANIC("Not implemented.");
-  return 0; /* Dummy */
+  /* if err
+  return PROCESS_ILLEGAL_JOIN;*/ /* Dummy */
+  return 0;
 }
 
 
