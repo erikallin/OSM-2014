@@ -1,0 +1,31 @@
+Race condition thread. 2 processer som begge vil lave ny tråd.
+
+fuck kmalloc.
+Lav en statisk tabel med plads til et konstant antal processer. process_table_t processes.
+
+Free, skal tjekke om der er en ledig plads i processen.
+
+Join skal have at man har en zombie(færdig med at køre), fri og køre.
+Join: brug sleep queue. Join gør at en process venter på den anden process. 
+Her skal man passe på deadlocks, ved begrænsningen: Kan kun joine på sit barn. Barn kan ikke joine på parent. så man skal holde styr på hvem forældre er.
+
+
+Brug værdierne i H, til at returnere fejl og ligende.
+
+Barnet skal blive indtil det er joinet.
+
+
+Processer: Forældre køre et proram med syscall_exec. og køre join for at vente på at den er færdig. 
+
+
+init.
+Sætte alle værdier i process_table til free. (Much easy, wow)
+
+
+Spawn:
+Lav en ny tråd, og kald process_start i den (som argument).
+
+Process tabellen strengen som definerer jeres program må ikke være en pointer.
+
+Copier stien ind i process tabellen. (for at undgå at pegeren kan forsvinde)
+
