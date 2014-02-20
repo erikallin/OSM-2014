@@ -45,6 +45,8 @@
 #include "vm/vm.h"
 #include "vm/pagepool.h"
 
+#include "kernel/sleepq.h"
+
 /** @name Process startup
  *
  * This module contains facilities for managing userland process.
@@ -191,10 +193,9 @@ void process_start(const char *executable)
 /* Sets every entry in the table to free */
 void process_init() {
   for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
-    process_table[i]->free = 1;
     process_table[i]->zombie = 0;
     process_table[i]->running = 0;
-    process_table[i]->dead = 0;
+    process_table[i]->dead = 1;
   }
 }
 
@@ -210,11 +211,32 @@ void process_finish(int retval) {
   KERNEL_PANIC("Not implemented.");
 }
 
+/* Finder kontrolblokken med det id som er givet som argument */
+int findBlockPlace(process_id_t pid) {
+  for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
+    if (process_table[i]->process_id == pid) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
 int process_join(process_id_t pid) {
-  pid=pid;
-  KERNEL_PANIC("Not implemented.");
-  /* if err
-  return PROCESS_ILLEGAL_JOIN;*/ /* Dummy */
+  int tablePlace = findBlockPlace(pid);
+
+  if (tablePlace < 0)
+    KERNEL_PANIC("NO ID FOUND.");
+  if (process_table[tablePlace]->childs != 0)
+    return PROCESS_ILLEGAL_JOIN;
+
+  //TODO vent på processen er færdig (med sleepQ)
+
+  sleepq_add(process_table[tablePlace]);
+
+  process_table[tablePlace]->dead = 1;
+
+
   return 0;
 }
 
