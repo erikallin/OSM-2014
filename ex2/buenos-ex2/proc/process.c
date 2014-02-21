@@ -66,7 +66,7 @@ process_control_block_t process_table[PROCESS_MAX_PROCESSES];
  * @executable The name of the executable to be run in the userland
  * process
  */
-void process_start(const char *executable)
+void process_start(process_id_t pid)
 {
     thread_table_t *my_entry;
     pagetable_t *pagetable;
@@ -94,7 +94,7 @@ void process_start(const char *executable)
     my_entry->pagetable = pagetable;
     _interrupt_set_state(intr_status);
 
-    file = vfs_open((char *)executable);
+    file = vfs_open(process_table[pid].exec);
     /* Make sure the file existed and was a valid ELF file */
     KERNEL_ASSERT(file >= 0);
     KERNEL_ASSERT(elf_parse_header(&elf, file));
@@ -193,15 +193,26 @@ void process_start(const char *executable)
 /* Sets every entry in the table to free */
 void process_init() {
   for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
-    (process_table[i])->zombie = 0;
-    (process_table[i])->running = 0;
-    (process_table[i])->dead = 1;
+    process_table[i].state = FREE;
   }
 }
 
-process_id_t process_spawn(const char *executable) {
-  executable = executable;
-  KERNEL_PANIC("Not implemented.");
+int findFreeBlock() {
+  for(int i = 0; i<PROCESS_MAX_PROCESSES; i++) {
+      if(process_table[i].state == FREE) {
+        process_table[i].pid = i;
+        return i;
+       }
+      }
+  return PROCESS_PTABLE_FULL;
+ }
+
+process_id_t process_spawn(char *executable) {
+  int i = findFreeBlock();
+  process_table[i].exec = executable;
+  process_table[i].parent_id = process_get_current_process(); 
+  process_start(i);
+  
   return 0; /* Dummy */
 }
 
@@ -211,35 +222,28 @@ void process_finish(int retval) {
   KERNEL_PANIC("Not implemented.");
 }
 
-/* Finder kontrolblokken med det id som er givet som argument */
-int findBlockPlace(process_id_t pid) {
-  for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
-    if (process_table[i]->process_id == pid) {
-      return i;
-    }
-  }
-  return -1;
-}
 
 
 int process_join(process_id_t pid) {
-  int tablePlace = findBlockPlace(pid);
-
-  if (tablePlace < 0)
-    KERNEL_PANIC("NO ID FOUND.");
-  if (process_table[tablePlace]->childs != 0)
+spinlock_t lock;
+  if (!(process_table[pid].parent = process_get_current_process()))
     return PROCESS_ILLEGAL_JOIN;
 
   //TODO vent på processen er færdig (med sleepQ)
 
-  sleepq_add(process_table[tablePlace]);
+  intr_disable();
+   //SPINLOCKS
+                     
+  sleepq_add(&process_table[pid]);
 
+  //RELEASELOCK
   thread_switch();
+  
+  //ENABLE INTERRUPTS
+  process_table[pid].state = FREE;
+  
 
-  process_table[tablePlace]->dead = 1;
-
-
-  return 0;
+  return pid;
 }
 
 

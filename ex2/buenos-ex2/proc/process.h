@@ -39,7 +39,7 @@
 
 typedef int process_id_t;
 
-void process_start(const char *executable);
+void process_start(process_id_t pid);
 
 #define USERLAND_STACK_TOP 0x7fffeffc
 
@@ -47,11 +47,20 @@ void process_start(const char *executable);
 #define PROCESS_ILLEGAL_JOIN -2
 
 #define PROCESS_MAX_PROCESSES 32
+typedef enum {
+    ZOMBIE,
+    RUNNING,
+    DEAD,
+    FREE,
+    WAITING
+}  proc_state_t;
+
 
 typedef struct {
-  process_id_t process_id, parent_id;
-  int childs;
-  process_id_t zombie, running, dead; // States that can occur.
+  process_id_t pid;
+  process_id_t parent_id;
+  proc_state_t state;
+  char *exec;
 } process_control_block_t;
 
 /* Initialize the process table.  This must be called during kernel
@@ -59,7 +68,7 @@ typedef struct {
 void process_init();
 
 /* Run process in a new thread. Returns the PID of the new process. */
-process_id_t process_spawn(const char *executable);
+process_id_t process_spawn( char *executable);
 
 /* Stop the process and the thread it runs in. Sets the return value as well */
 void process_finish(int retval);
