@@ -41,7 +41,7 @@
 #include "kernel/assert.h"
 #include "drivers/device.h"
 #include "drivers/gcd.h"
-
+#include "proc/process.h"
 int syscall_write(uint32_t fd, char *s, int len)
 {
     fd = fd;
@@ -61,6 +61,24 @@ int syscall_read(uint32_t fd, char *s, int len)
     /* Not a G1 solution */
     ((gcd_t *)(device_get(YAMS_TYPECODE_TTY, 0)->generic_device))->read((gcd_t *)(device_get(YAMS_TYPECODE_TTY, 0)->generic_device), s, 1);
     return 1;
+}
+
+int syscall_exec(char *filename) {
+ process_id_t pid;
+ pid = (int) process_spawn(filename);
+ return pid;  
+}
+
+int syscall_exit(int retval) {
+ if(retval >= 0) {
+   process_finish(retval);
+   return retval;
+ }
+   return -1; 
+}
+
+int syscall_join(int pid) {
+ return process_join(pid);
 }
 
 #define V0 user_context->cpu_regs[MIPS_REGISTER_V0]
@@ -99,6 +117,15 @@ void syscall_handle(context_t *user_context)
         user_context->cpu_regs[MIPS_REGISTER_V0] =
             syscall_read(A1, (char *)A2, A3);
         break;
+    case SYSCALL_EXEC:
+       V0 = syscall_exec((char*)A1);
+       break;
+    case SYSCALL_EXIT:
+       syscall_exit(A1);
+       break;
+    case SYSCALL_JOIN:
+       V0 = syscall_join((int)A1);
+       break;
     default:
         KERNEL_PANIC("Unhandled system call\n");
     }

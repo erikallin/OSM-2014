@@ -194,6 +194,8 @@ void process_start(process_id_t pid)
 void process_init() {
   for (int i = 0; i < PROCESS_MAX_PROCESSES; i++) {
     process_table[i].state = FREE;
+    process_table[i].pid = i;
+    process_table[i].parent_id = process_get_current_process();
   }
 }
 
@@ -213,34 +215,54 @@ process_id_t process_spawn(char *executable) {
   process_table[i].parent_id = process_get_current_process(); 
   process_start(i);
   
-  return 0; /* Dummy */
+  return i; /* pid of new process */
 }
 
 /* Stop the process and the thread it runs in. Sets the return value as well */
 void process_finish(int retval) {
-  retval=retval;
-  KERNEL_PANIC("Not implemented.");
+  thread_table_t *thr;
+  thr = thread_get_current_thread_entry();
+  process_table[process_get_current_process()].retval = retval;
+  vm_destroy_pagetable(thr->pagetable);
+  thr->pagetable = NULL;
+  thread_finish();
 }
 
 
 
 int process_join(process_id_t pid) {
 spinlock_t lock;
-  if (!(process_table[pid].parent = process_get_current_process()))
+  if (!(process_table[pid].parent_id = process_get_current_process()))
     return PROCESS_ILLEGAL_JOIN;
 
-  //TODO vent på processen er færdig (med sleepQ)
 
-  intr_disable();
-   //SPINLOCKS
-                     
+  // disable interrupts.
+  _interrupt_disable();
+  
+  //acquire the resource spinlock
+  spinlock_acquire(&lock);
+  
+  
+  //add to sleeq..
   sleepq_add(&process_table[pid]);
+  
+  //release the resource spinlock.
+  spinlock_release(&lock);
 
-  //RELEASELOCK
+  //thread_switch()
   thread_switch();
   
-  //ENABLE INTERRUPTS
+  //Acquire the resource spinlock.
+  spinlock_acquire(&lock);
+  
+  //Do your duty with the resource (Frigøre processen, nu hvor den er færdig)
   process_table[pid].state = FREE;
+  
+  //release the resource spinlock
+  spinlock_release(&lock);
+
+  //Restore the interrupt mask.
+  _interrupt_enable();
   
 
   return pid;

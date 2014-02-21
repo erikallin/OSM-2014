@@ -60,7 +60,8 @@ typedef struct {
   process_id_t pid;
   process_id_t parent_id;
   proc_state_t state;
-  char *exec;
+  char  *exec;
+  int retval;
 } process_control_block_t;
 
 /* Initialize the process table.  This must be called during kernel
@@ -68,7 +69,7 @@ typedef struct {
 void process_init();
 
 /* Run process in a new thread. Returns the PID of the new process. */
-process_id_t process_spawn( char *executable);
+process_id_t process_spawn( char  *executable);
 
 /* Stop the process and the thread it runs in. Sets the return value as well */
 void process_finish(int retval);
