@@ -6,8 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met:
- *
+ * are met: *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above
@@ -94,7 +93,7 @@ void process_start(process_id_t pid)
     my_entry->pagetable = pagetable;
     _interrupt_set_state(intr_status);
 
-    file = vfs_open(process_table[pid].exec);
+    file = vfs_open((char*) process_table[pid].exec);
     /* Make sure the file existed and was a valid ELF file */
     KERNEL_ASSERT(file >= 0);
     KERNEL_ASSERT(elf_parse_header(&elf, file));
@@ -109,6 +108,7 @@ void process_start(process_id_t pid)
 		  <= _tlb_get_maxindex() + 1);
 
     /* Allocate and map stack */
+    kprintf("LINE 111\n");
     for(i = 0; i < CONFIG_USERLAND_STACK_SIZE; i++) {
         phys_page = pagepool_get_phys_page();
         KERNEL_ASSERT(phys_page != 0);
@@ -119,13 +119,14 @@ void process_start(process_id_t pid)
     /* Allocate and map pages for the segments. We assume that
        segments begin at page boundary. (The linker script in tests
        directory creates this kind of segments) */
+    kprintf("LINE 122\n");
     for(i = 0; i < (int)elf.ro_pages; i++) {
         phys_page = pagepool_get_phys_page();
         KERNEL_ASSERT(phys_page != 0);
         vm_map(my_entry->pagetable, phys_page, 
                elf.ro_vaddr + i*PAGE_SIZE, 1);
     }
-
+    kprintf("LINE 129\n");
     for(i = 0; i < (int)elf.rw_pages; i++) {
         phys_page = pagepool_get_phys_page();
         KERNEL_ASSERT(phys_page != 0);
@@ -137,7 +138,9 @@ void process_start(process_id_t pid)
        pages fit into the TLB. After writing proper TLB exception
        handling this call should be skipped. */
     intr_status = _interrupt_disable();
+    kprintf("LINE141");
     tlb_fill(my_entry->pagetable);
+    kprintf("LINE143");
     _interrupt_set_state(intr_status);
     
     /* Now we may use the virtual addresses of the segments. */
@@ -203,18 +206,23 @@ int findFreeBlock() {
   for(int i = 0; i<PROCESS_MAX_PROCESSES; i++) {
       if(process_table[i].state == FREE) {
         process_table[i].pid = i;
-        return i;
+        return i;      
        }
-      }
+
+   }
   return PROCESS_PTABLE_FULL;
  }
 
-process_id_t process_spawn(char *executable) {
-  int i = findFreeBlock();
+process_id_t process_spawn(char const *executable) {
+  TID_t newThread;
+   int i = findFreeBlock();
   process_table[i].exec = executable;
   process_table[i].parent_id = process_get_current_process(); 
-  process_start(i);
-  
+  process_table[i].state = RUNNING;
+  newThread = thread_create((void*)process_start,(uint32_t)i);
+  thread_run(newThread);
+  kprintf("PROCESS SPAWN ER STARTET\n");
+ 
   return i; /* pid of new process */
 }
 
@@ -231,23 +239,26 @@ void process_finish(int retval) {
 
 
 int process_join(process_id_t pid) {
+ kprintf("PROCESS JOIN ER STARTET\n");
+
 spinlock_t lock;
   if (!(process_table[pid].parent_id = process_get_current_process()))
     return PROCESS_ILLEGAL_JOIN;
 
-
+ kprintf("PROCESS JOIN ER LEGAL\n");
   // disable interrupts.
   _interrupt_disable();
-  
+ kprintf("interrupts disabled\n"); 
   //acquire the resource spinlock
   spinlock_acquire(&lock);
-  
-  
-  //add to sleeq..
+  kprintf("LOCK er ACQUIRED\n");
+    //add to sleeq..
+  process_table[process_get_current_process()].state = WAITING;
   sleepq_add(&process_table[pid]);
   
   //release the resource spinlock.
   spinlock_release(&lock);
+  kprintf("TRÅD BLIVER SAT I SENG");
 
   //thread_switch()
   thread_switch();
@@ -260,13 +271,14 @@ spinlock_t lock;
   
   //release the resource spinlock
   spinlock_release(&lock);
-
-  //Restore the interrupt mask.
+  process_table[process_get_current_process()].state = RUNNING;
+//  Restore the interrupt mask.
   _interrupt_enable();
   
+  kprintf("PROCESS_JOIN ER KOMMET IGENNEM");
+ return pid;
 
-  return pid;
-}
+ }
 
 
 process_id_t process_get_current_process(void)

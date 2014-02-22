@@ -63,7 +63,7 @@ int syscall_read(uint32_t fd, char *s, int len)
     return 1;
 }
 
-int syscall_exec(char *filename) {
+int syscall_exec(char const *filename) {
  process_id_t pid;
  pid = (int) process_spawn(filename);
  return pid;  
@@ -118,10 +118,10 @@ void syscall_handle(context_t *user_context)
             syscall_read(A1, (char *)A2, A3);
         break;
     case SYSCALL_EXEC:
-       V0 = syscall_exec((char*)A1);
+       V0 = syscall_exec((char const*)A1);
        break;
     case SYSCALL_EXIT:
-       syscall_exit(A1);
+       syscall_exit((int)A1);
        break;
     case SYSCALL_JOIN:
        V0 = syscall_join((int)A1);

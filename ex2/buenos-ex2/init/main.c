@@ -58,8 +58,7 @@
 #include "vm/vm.h"
 
 /**
- * Fallback function for system startup. This function is executed
- * if the initial startup program (shell or other userland process given
+ * Fallback function for system startup. This function is executed * if the initial startup program (shell or other userland process given
  * with initprog boot argument) is not started or specified.
  *
  * This is a good place for some kernel test code!
@@ -134,7 +133,7 @@ void init_startup_thread(uint32_t arg)
     process_init();
     process_spawn(bootargs_get("initprog"));
     /* The current process_start() should never return. */
-    KERNEL_PANIC("Run out of initprog.\n");
+   // KERNEL_PANIC("Run out of initprog.\n");
 }
 
 /* Whether other processors than 0 may continue in SMP mode.
