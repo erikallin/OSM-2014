@@ -65,8 +65,7 @@ process_control_block_t process_table[PROCESS_MAX_PROCESSES];
  * @executable The name of the executable to be run in the userland
  * process
  */
-void process_start(process_id_t pid)
-{
+void process_start(process_id_t pid) {
     thread_table_t *my_entry;
     pagetable_t *pagetable;
     uint32_t phys_page;
@@ -108,7 +107,7 @@ void process_start(process_id_t pid)
 		  <= _tlb_get_maxindex() + 1);
 
     /* Allocate and map stack */
-    kprintf("LINE 111\n");
+  //  kprintf("LINE 111\n");
     for(i = 0; i < CONFIG_USERLAND_STACK_SIZE; i++) {
         phys_page = pagepool_get_phys_page();
         KERNEL_ASSERT(phys_page != 0);
@@ -119,14 +118,14 @@ void process_start(process_id_t pid)
     /* Allocate and map pages for the segments. We assume that
        segments begin at page boundary. (The linker script in tests
        directory creates this kind of segments) */
-    kprintf("LINE 122\n");
+ //   kprintf("LINE 122\n");
     for(i = 0; i < (int)elf.ro_pages; i++) {
         phys_page = pagepool_get_phys_page();
         KERNEL_ASSERT(phys_page != 0);
         vm_map(my_entry->pagetable, phys_page, 
                elf.ro_vaddr + i*PAGE_SIZE, 1);
     }
-    kprintf("LINE 129\n");
+ //   kprintf("LINE 129\n");
     for(i = 0; i < (int)elf.rw_pages; i++) {
         phys_page = pagepool_get_phys_page();
         KERNEL_ASSERT(phys_page != 0);
@@ -138,11 +137,11 @@ void process_start(process_id_t pid)
        pages fit into the TLB. After writing proper TLB exception
        handling this call should be skipped. */
     intr_status = _interrupt_disable();
-    kprintf("LINE141");
+//    kprintf("LINE141");
     tlb_fill(my_entry->pagetable);
-    kprintf("LINE143");
+//    kprintf("LINE143");
     _interrupt_set_state(intr_status);
-    
+
     /* Now we may use the virtual addresses of the segments. */
 
     /* Zero the pages. */
@@ -204,25 +203,25 @@ void process_init() {
 
 int findFreeBlock() {
   for(int i = 0; i<PROCESS_MAX_PROCESSES; i++) {
-      if(process_table[i].state == FREE) {
-        process_table[i].pid = i;
-        return i;      
-       }
+    if(process_table[i].state == FREE) {
+      process_table[i].pid = i;
+      return i;
+    }
 
-   }
+  }
   return PROCESS_PTABLE_FULL;
  }
 
 process_id_t process_spawn(char const *executable) {
   TID_t newThread;
-   int i = findFreeBlock();
+  int i = findFreeBlock();
   process_table[i].exec = executable;
   process_table[i].parent_id = process_get_current_process(); 
   process_table[i].state = RUNNING;
   newThread = thread_create((void*)process_start,(uint32_t)i);
   thread_run(newThread);
   kprintf("PROCESS SPAWN ER STARTET\n");
- 
+
   return i; /* pid of new process */
 }
 
@@ -230,6 +229,7 @@ process_id_t process_spawn(char const *executable) {
 void process_finish(int retval) {
   thread_table_t *thr;
   thr = thread_get_current_thread_entry();
+  process_table[process_get_current_process()].state = ZOMBIE;
   process_table[process_get_current_process()].retval = retval;
   vm_destroy_pagetable(thr->pagetable);
   thr->pagetable = NULL;
@@ -241,59 +241,56 @@ void process_finish(int retval) {
 int process_join(process_id_t pid) {
  kprintf("PROCESS JOIN ER STARTET\n");
 
-spinlock_t lock;
-  if (!(process_table[pid].parent_id = process_get_current_process()))
-    return PROCESS_ILLEGAL_JOIN;
+ spinlock_t lock;
+   if (!(process_table[pid].parent_id = process_get_current_process()))
+     return PROCESS_ILLEGAL_JOIN;
 
- kprintf("PROCESS JOIN ER LEGAL\n");
+  kprintf("PROCESS JOIN ER LEGAL\n");
   // disable interrupts.
   _interrupt_disable();
- kprintf("interrupts disabled\n"); 
+  kprintf("interrupts disabled\n"); 
   //acquire the resource spinlock
+  spinlock_reset(&lock);
   spinlock_acquire(&lock);
   kprintf("LOCK er ACQUIRED\n");
-    //add to sleeq..
+  //add to sleeq..
   process_table[process_get_current_process()].state = WAITING;
   sleepq_add(&process_table[pid]);
-  
+
   //release the resource spinlock.
   spinlock_release(&lock);
-  kprintf("TRÅD BLIVER SAT I SENG");
+  kprintf("TRÅD BLIVER SAT I SENG\n");
 
   //thread_switch()
   thread_switch();
-  
+
   //Acquire the resource spinlock.
   spinlock_acquire(&lock);
-  
+
   //Do your duty with the resource (Frigøre processen, nu hvor den er færdig)
   process_table[pid].state = FREE;
-  
+
   //release the resource spinlock
   spinlock_release(&lock);
   process_table[process_get_current_process()].state = RUNNING;
-//  Restore the interrupt mask.
+  //Restore the interrupt mask.
   _interrupt_enable();
-  
-  kprintf("PROCESS_JOIN ER KOMMET IGENNEM");
- return pid;
 
- }
+  kprintf("PROCESS_JOIN ER KOMMET IGENNEM\n");
+  return process_table[process_get_current_process()].retval;
+}
 
 
-process_id_t process_get_current_process(void)
-{
+process_id_t process_get_current_process(void) {
     return thread_get_current_thread_entry()->process_id;
 }
 
-process_control_block_t *process_get_current_process_entry(void)
-{
+process_control_block_t *process_get_current_process_entry(void) {
     return &process_table[process_get_current_process()];
 }
 
 process_control_block_t *process_get_process_entry(process_id_t pid) {
     return &process_table[pid];
 }
-
 
 /** @} */

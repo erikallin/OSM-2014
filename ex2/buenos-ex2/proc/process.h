@@ -50,7 +50,6 @@ void process_start(process_id_t pid);
 typedef enum {
     ZOMBIE,
     RUNNING,
-    DEAD,
     FREE,
     WAITING
 }  proc_state_t;
@@ -69,7 +68,7 @@ typedef struct {
 void process_init();
 
 /* Run process in a new thread. Returns the PID of the new process. */
-process_id_t process_spawn( char const  *executable);
+process_id_t process_spawn(char const *executable);
 
 /* Stop the process and the thread it runs in. Sets the return value as well */
 void process_finish(int retval);

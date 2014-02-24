@@ -49,10 +49,16 @@
 
 
 \section*{Task 1}
+Da trådene bliver kørt for hurtigt, hvis der ikke bliver kaldt en funktion, såsom \texttt{kprintf}.
+
+\subsection*{process.h}
+For at have tilstande har vi lavet en \texttt{enum} til at repræsentere de tilstande en proces kan have. Dertil selve datastrukturen for kontrolblokken, som indeholder et procesid, PID, forældrens PID for at kunne tjekke om processen har en forældre, og tilstanden for processen.
+
+\subsection*{process.c}
 
 \section*{Task 2}
 
-\subsection{Testing}
+\subsection*{Testing}
 
 
 \end{document}
