@@ -207,7 +207,7 @@ int findFreeBlock() {
       process_table[i].pid = i;
       return i;
     }
-
+   
   }
   return PROCESS_PTABLE_FULL;
  }
@@ -215,12 +215,15 @@ int findFreeBlock() {
 process_id_t process_spawn(char const *executable) {
   TID_t newThread;
   int i = findFreeBlock();
+  if(i < 0)  
+    return PROCESS_PTABLE_FULL;
+    
   process_table[i].exec = executable;
   process_table[i].parent_id = process_get_current_process(); 
   process_table[i].state = RUNNING;
   newThread = thread_create((void*)process_start,(uint32_t)i);
   thread_run(newThread);
-  kprintf("PROCESS SPAWN ER STARTET\n");
+//  kprintf("PROCESS SPAWN ER STARTET\n");
 
   return i; /* pid of new process */
 }
@@ -239,27 +242,27 @@ void process_finish(int retval) {
 
 
 int process_join(process_id_t pid) {
- kprintf("PROCESS JOIN ER STARTET\n");
+// kprintf("PROCESS JOIN ER STARTET\n");
 
  spinlock_t lock;
    if (!(process_table[pid].parent_id = process_get_current_process()))
      return PROCESS_ILLEGAL_JOIN;
 
-  kprintf("PROCESS JOIN ER LEGAL\n");
+//  kprintf("PROCESS JOIN ER LEGAL\n");
   // disable interrupts.
   _interrupt_disable();
-  kprintf("interrupts disabled\n"); 
+//  kprintf("interrupts disabled\n"); 
   //acquire the resource spinlock
   spinlock_reset(&lock);
   spinlock_acquire(&lock);
-  kprintf("LOCK er ACQUIRED\n");
+//  kprintf("LOCK er ACQUIRED\n");
   //add to sleeq..
   process_table[process_get_current_process()].state = WAITING;
   sleepq_add(&process_table[pid]);
 
   //release the resource spinlock.
   spinlock_release(&lock);
-  kprintf("TRÅD BLIVER SAT I SENG\n");
+//  kprintf("TRÅD BLIVER SAT I SENG\n");
 
   //thread_switch()
   thread_switch();
@@ -276,7 +279,7 @@ int process_join(process_id_t pid) {
   //Restore the interrupt mask.
   _interrupt_enable();
 
-  kprintf("PROCESS_JOIN ER KOMMET IGENNEM\n");
+//  kprintf("PROCESS_JOIN ER KOMMET IGENNEM\n");
   return process_table[process_get_current_process()].retval;
 }
 

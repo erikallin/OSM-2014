@@ -49,12 +49,38 @@
 
 
 \section*{Task 1}
-Da trådene bliver kørt for hurtigt, hvis der ikke bliver kaldt en funktion, såsom \texttt{kprintf}.
+Da det kun er spawn der genererer nye processorer, og vi via vores debugging i \texttt{proc/process.c} tester dette (via de mange udkommenterede kprintf) skulle der meget gerne kun være to processer kørende, men alligevel gives der fejlen \textit{"TLB - load not handled yet". }
+\\
+Vi har af denne grund ikke kunnet teste særlig grundigt, men af debuggingen se at Spawn er istand til at starte programmet. 
+\\[5px]
+Nedenfor beskrives funktionerne Init, spawn, join og finish:
+\subsection*{Init}
+Kører alle processer igennem hvor antal = \texttt{PROCESS MAX PROCESSES} og sætter deres state til FREE. 
+\\
+Herudover gemmes processernes ID (pid) samt deres ID i den thread/forældre de kører i. 
+
+
+\subsection*{Spawn}
+Først findes en ledig plads blandt processerne via funktionen \texttt{findFreeBlock}, der enten returnerer en ledig process i process tabellen eller meddeler, at der ikke er nogle ledige. 
+\\
+Herefter gemmes exec i variablen executable, så start senere kan tilgå den. \\
+Der sættes forældrens ID og herefter ændres processens state til RUNNING.
+\\
+Herefter køres processen via process start i en ny tråd, der laves i newThread.
+\\
+Til sidst returneres process ID'et på den nye process.
+
+
+\subsection*{Join}
+
+
+
+\subsection*{Finish}
+
 
 \subsection*{process.h}
 For at have tilstande har vi lavet en \texttt{enum} til at repræsentere de tilstande en proces kan have. Dertil selve datastrukturen for kontrolblokken, som indeholder et procesid, PID, forældrens PID for at kunne tjekke om processen har en forældre, og tilstanden for processen.
 
-\subsection*{process.c}
 
 \section*{Task 2}
 
