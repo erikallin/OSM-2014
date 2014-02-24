@@ -258,17 +258,19 @@ int process_join(process_id_t pid) {
 //  kprintf("LOCK er ACQUIRED\n");
   //add to sleeq..
   process_table[process_get_current_process()].state = WAITING;
-  sleepq_add(&process_table[pid]);
+  while(!(process_table[pid].state == ZOMBIE)) {
+   sleepq_add(&process_table[pid]);
 
   //release the resource spinlock.
-  spinlock_release(&lock);
+   spinlock_release(&lock);
 //  kprintf("TRÅD BLIVER SAT I SENG\n");
 
   //thread_switch()
-  thread_switch();
+   thread_switch();
 
   //Acquire the resource spinlock.
-  spinlock_acquire(&lock);
+   spinlock_acquire(&lock);
+  }
 
   //Do your duty with the resource (Frigøre processen, nu hvor den er færdig)
   process_table[pid].state = FREE;
