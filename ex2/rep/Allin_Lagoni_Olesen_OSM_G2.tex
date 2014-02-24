@@ -72,17 +72,33 @@ Til sidst returneres process ID'et på den nye process.
 
 
 \subsection*{Join}
-
+I join valgte vi at følge proceduren fra Buenos Roadmap delkapitel 5.2.1 for hvordan processer ligges i SleepQ'en. \\
+Dette har vi dog ikke kunne teste ordentligt pga. fejlen, der også tidlgiere er beskrevet.
 
 
 \subsection*{Finish}
-
+Dræber en konkret tråd og sætter den process.state til ZOMBIE. 
+\\
+Gemmer returværdien (argumentet retval) i process tablen/kontrolblokken. 
 
 \subsection*{process.h}
 For at have tilstande har vi lavet en \texttt{enum} til at repræsentere de tilstande en proces kan have. Dertil selve datastrukturen for kontrolblokken, som indeholder et procesid, PID, forældrens PID for at kunne tjekke om processen har en forældre, og tilstanden for processen.
 
 
 \section*{Task 2}
+Her er systemkaldende EXEC, EXIT og JOIN implementeret. 
+\\[5px]
+\textbf{EXEC:} Kører filen med det pågældende process id, som findes via at finde pid'et i process.tabellen hvorefter der køres spawn på denne. 
+\\
+\textbf{EXIT:} Terminerer en pågældende process. Herudover tjekker den om returværdien er positiv og hvis den er dette køres finish på denne. Til sidst returneres retval.
+\\
+Hvis retval er negativ returneres -1, da der så er tale om en fejl.
+\\
+\textbf{JOIN:}
+Kører funktionen join på en 'børne-process' når den har ventet på at den er færdig med at køre.
+
+
+
 
 \subsection*{Testing}
 
