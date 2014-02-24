@@ -49,6 +49,8 @@
 
 
 \section*{Task 1}
+I denne opgave er der redigeret i filerne: \texttt{proc/process.h}, \texttt{proc/process.c} og \texttt{init/main.c}
+\\[5px]
 Da det kun er spawn der genererer nye processorer, og vi via vores debugging i \texttt{proc/process.c} tester dette (via de mange udkommenterede kprintf) skulle der meget gerne kun være to processer kørende, men alligevel gives der fejlen \textit{"TLB - load not handled yet". }
 \\
 Vi har af denne grund ikke kunnet teste særlig grundigt, men af debuggingen se at Spawn er istand til at starte programmet. 
@@ -86,6 +88,8 @@ For at have tilstande har vi lavet en \texttt{enum} til at repræsentere de tils
 
 
 \section*{Task 2}
+I denne opgave er der redigeret i filerne: \texttt{proc/syscall.h} og \texttt{proc/syscall.c}
+\\[5px]
 Her er systemkaldende EXEC, EXIT og JOIN implementeret. 
 \\[5px]
 \textbf{EXEC:} Kører filen med det pågældende process id, som findes via at finde pid'et i process.tabellen hvorefter der køres spawn på denne. 
@@ -97,10 +101,6 @@ Hvis retval er negativ returneres -1, da der så er tale om en fejl.
 \textbf{JOIN:}
 Kører funktionen join på en 'børne-process' når den har ventet på at den er færdig med at køre.
 
-
-
-
-\subsection*{Testing}
 
 
 \end{document}

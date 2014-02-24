@@ -2,6 +2,7 @@
 ## Eclipse
 #################
 
+*.map
 *.d
 
 *.pydevproject
