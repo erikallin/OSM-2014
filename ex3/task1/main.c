@@ -4,6 +4,8 @@
 
 int main() {
 
+  stack_t *firstStack;
+
 
   return 0;
 }

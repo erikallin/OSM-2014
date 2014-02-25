@@ -44,7 +44,7 @@ void* rowmult(void *arg) {
 /* Output a matrix of dimensions size x size. */
 void output_square_matrix(double *m, int size) {
   int i, j;
-  
+
   for (i = 0; i < size; i++) {
     for (j = 0; j < size; j++) {
       printf("%3.2f  ", m[i * size + j]);
