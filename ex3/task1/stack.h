@@ -2,10 +2,14 @@
 #define STACK_H
 
 #define STACK_MAX_SIZE 1024
+#include "dlList.h"
+#include <pthread.h>
 
 typedef struct stack_t {
-  void* data[STACK_MAX_SIZE];
+  dlist* list;
   int top;
+  pthread_mutex_t lock;
+  int condVar;
 } stack_t;
 
 /* Initialise a freshly allocated stack.  Must be called before using
