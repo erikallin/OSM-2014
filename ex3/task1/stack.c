@@ -5,7 +5,7 @@
 
 void stack_init(stack_t* stack) {
   stack->top = -1;
-  pthread_mutex_init(&stack->lock, NULL);
+  pthread_mutex_init(&stack->lock,NULL);
   stack->condVar = 0;  
 }
 
@@ -46,13 +46,12 @@ void* stack_pop(stack_t* stack) {
 
 int stack_push(stack_t* stack, void* data) {
   /* mere lås */
-  printf("whatisevengoingon");
-  pthread_mutex_lock(&stack->lock);
+//  pthread_mutex_lock(&stack->lock);
  // stack->condVar = 1;
-  printf("HEJ IGEN DENNIS");
   stack->top++;
   insert(stack->list,data,0);
-  pthread_mutex_unlock(&stack->lock);
+  printf("hey, se hvem der indsatte noget\n");
+//  pthread_mutex_unlock(&stack->lock);
  // stack->condVar = 0;
   return 0;
 }

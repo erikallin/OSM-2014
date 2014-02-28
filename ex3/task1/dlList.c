@@ -5,9 +5,11 @@
 void insert(dlist *this, item *thing, bool atTail) {
   node *newNode = malloc(sizeof(node));
   newNode->thing = thing;
-
-
-  if (atTail) {
+  if (this->head == NULL) {
+     this->head = newNode;
+     this->head->ptr = NULL; 
+   } 
+  else { if (atTail) {
     newNode->ptr = (this->tail);
     this->tail->ptr = (node*)((uintptr_t)this->tail->ptr ^ (uintptr_t)newNode);
     this->tail = newNode;
@@ -17,6 +19,7 @@ void insert(dlist *this, item *thing, bool atTail) {
     this->head->ptr = (node*)((uintptr_t)this->head->ptr ^ (uintptr_t)newNode);
     this->head = newNode;
   }
+}
 }
 
 
