@@ -1,4 +1,4 @@
-SOURCE=stack.c dlList.c
+SOURCE=stack.c dlList.c 
 CC=gcc
 CFLAGS=-lpthread -Wpedantic -Wall -Werror -std=c99 -O2
 OBJ=$(SOURCE:.c=.o)

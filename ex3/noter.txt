@@ -1,0 +1,14 @@
+
+Opgave 1a. 
+Lav stack der håndtere tråde.
+Den skal dynamisk håndtere hukommelse. Dette gør at stack_top kan give problemer
+hvis der bliver poppet samtidig med man tjekker top.
+man må ikke bruge readwrite lock typen. #æv
+
+Man skal lave stacken statisk allokeret (også i h). se Relloc.
+
+
+opgave 2.
+Tabel med mapping fra bruger semaphore til kerne semaphore. (yo, lav endelig en
+ny tabel) og gem den på en smart simpel måde og så er det meget sådan.mutual exclusion.
+Det basicly rapper til eksisterende. og overvej hvis flere vil tilgå det.

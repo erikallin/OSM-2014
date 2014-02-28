@@ -46,12 +46,14 @@ void* stack_pop(stack_t* stack) {
 
 int stack_push(stack_t* stack, void* data) {
   /* mere lås */
+  printf("whatisevengoingon");
   pthread_mutex_lock(&stack->lock);
  // stack->condVar = 1;
+  printf("HEJ IGEN DENNIS");
   stack->top++;
   insert(stack->list,data,0);
   pthread_mutex_unlock(&stack->lock);
-  stack->condVar = 0;
+ // stack->condVar = 0;
   return 0;
 }
 
