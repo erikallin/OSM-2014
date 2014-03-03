@@ -19,9 +19,26 @@ Task 1 b)
 I denne bruges strukturen void* arg, til at passere argumentet til thread_create
 Som det første hentes rowsne ind en ad gangen i stacken.
 Derefter sættes threadsne igang en ad gangen og popper fra stacken for at få 
-argumenterne. 
+argumenterne. I rowmult, som løser et row ad gangen, pushes til stack_result,
+hvor resultatere så er gemt i, så vi senere kan stack_pop fra result, og indsætte
+i result matricen. 
 Hvis der er flere rækker end max antallet af threads, kaldes der join som venter
 på at tråden er færdig, og når de er færdige kan der laves nye tråde.
 \\
-\\
+I denne opgave har vi ikke kunnet teste grundet forskellige fejl der har
+forhindret os i at have et fungerende program. 
+
+
+Task 2. 
+I denne har vi indskrevet funktionerne, semaphore_open, semaphore_v, semaphore_p
+og semaphore_destroy i syscall.c.
+Til v og p, har vi udelukkende kaldet semaphore_p og semaphore_v fra kernel funktionerne.
+selve structen usr_sem_t er defineret som en char const* og en semaphore_t.
+i destroy er der gjort så den kun destroyer hvis semaphoren er ledig (value <= 0) 
+så den ikke ødelægger det for en tråd der venter.
+I open bruger vi hjælpe funktionen find_existing_block til at tjekke
+om der i forvejen er semaphore med det givne navn. og find_free_block til at 
+finde en ledig plads i semlist.
+Denne kode er ikke blevet testet grundet problemer med compiling af test filer.
+
 

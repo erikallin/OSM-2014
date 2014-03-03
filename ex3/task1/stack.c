@@ -33,14 +33,13 @@ void* stack_pop(stack_t* stack) {
     stack->condVar = 0;
     return a;
   }
-
+  
   pthread_mutex_unlock(&stack->lock);
   stack->condVar = 0;
   return (int*)-1;
 }
 
 int stack_push(stack_t* stack, void* data) {
-  /* Mere lås */
   pthread_mutex_lock(&stack->lock);
   stack->condVar = 1;
   stack->top++;
@@ -49,8 +48,6 @@ int stack_push(stack_t* stack, void* data) {
   stack->condVar = 0;
   return 0;
 }
-
-
 
 
 

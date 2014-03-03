@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include "stack.h"
 
-// STRUCT DER SKAL GIVES TIL rowmult fra absalon, men med pos, for at genskabe 
+// STRUCT DER SKAL GIVES TIL rowmult fra absalon, men med pos, for at genskabe
 //result ved slutningen
 typedef struct {
   int pos;
@@ -14,21 +14,21 @@ typedef struct {
 } ttask_t;
 
 
-  // klargøre stacken
-  stack_t* stack;
-  stack_t* stack_result;
-  stack_init(stack);
-  stack_init(stack_result);
+// Klargører stacken
+stack_t* stack;
+stack_t* stack_result;
+stack_init(stack);
+stack_init(stack_result);
 
 
 /* Zero the result row of ints in memory, compute dot product of row A with
- * all columns of B, return. */
+* all columns of B, return. */
 void* rowmult(void *arg) {
   int i, j;
   ttask_t *t;
-
+  
   t = (ttask_t*) arg;
-
+  
   for (j = 0; j < t->b_columns; j++) {
     t->row_result[j] = 0;
   }
@@ -46,14 +46,14 @@ int main()  {
   pthread_t pid[MAX_THREADS];
   //Definere størrelsen af matricer (pt. arbejdes der kun på kvadratiske matricer
   int size = 5;
-  // sætter size - 1, grundet 0 indexering 
+  // sætter size - 1, grundet 0 indexering
   size = size-1;
   //Klargøre matricerne, a, b og result matricen.
   int* a = malloc(sizeof(int)*size*size);
   int* b = malloc(sizeof(int)*size*size);
   int* result = malloc(sizeof(int)*size*size);
-  int* arow; 
-
+  int* arow;
+  
   //Pusher en masse ttask_t på stacken.
   ttask_t* task = malloc(sizeof(ttask_t));
   for(i = 0; i < size; i++) {
@@ -62,58 +62,40 @@ int main()  {
       arow[n] = a[i*size + n];
     }
     task->pos = i;
-    task->row_a = arow; 
+    task->row_a = arow;
     task->row_result = result;
-    task->matrix_b = b; 
+    task->matrix_b = b;
     task->a_length = size;
     task->b_columns = size;
     stack_push(stack,task);
   }
   
-  /*Nu starter vi tråde som starter på row_mult på stacken,
-   og ligger resultatet over på stack_result, på ny stack */
-   int n = 0;
-   for(i = 0; i < size; i++) {
-     if(n >= MAX_THREADS) {
+  /* Nu starter vi tråde som starter på row_mult på stacken,
+  og ligger resultatet over på stack_result, på ny stack */
+  int n = 0;
+  for(i = 0; i < size; i++) {
+    if(n >= MAX_THREADS) {
       while(n < MAX_THREADS) {
         pthread_join(pid[n],NULL);
         n = 0;
       }
-     pthread_create(&pid[n],NULL,rowmult,stack_pop(stack));
-     n++;
-     }
-   }
- 
-  //henter fra stack_result over i result matricen.
+      pthread_create(&pid[n],NULL,rowmult,stack_pop(stack));
+      n++;
+    }
+  }
+  
+  // Henter fra stack_result over i result matricen.
   for(i = 0; i < size; i++) {
     ttask_t* arg = (ttask_t*) stack_pop(stack_result);
     result[arg->pos*size + i] = arg->row_result[i];
   }
   
-  //printer result matricen
+  // Printer result matricen
   for(i = 0; i < size; i++) {
     if(i % (size+1) == 0) {
-    printf("\n");
+      printf("\n");
     }
     printf("%d  ", result[i]);
   }
-
-
-
+   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
