@@ -44,6 +44,64 @@
 #include "drivers/gcd.h"
 #include "fs/vfs.h"
 #include "kernel/thread.h"
+#include "kernel/semaphore.h"
+
+#define MAX_SEM 10
+
+typedef struct {
+  char const* name;
+  semaphore_t* sem;
+} usr_sem_t;
+
+usr_sem_t semlist[MAX_SEM]; 
+  
+int find_free_block() {
+  for(int i = 0; i < MAX_SEM; i++) {
+   if (semlist[i].name == NULL)
+     return i;
+  }
+  return -1;
+}
+  
+void* find_existing_block(char const* name) {
+  for(int i = 0; i < MAX_SEM; i++) {
+    if(semlist[i].name == name)
+      return &semlist[i];
+  }
+  return (int*)-1;
+}
+  
+usr_sem_t* syscall_sem_open(char const* name, int value) {
+  if (value >= 0) {
+        if(!((int*)find_existing_block(name) == (int*)-1))
+          return NULL;
+        
+        int i = find_free_block();
+        semlist[i].sem = (semaphore_t*) semaphore_create(value);
+        semlist[i].name = name;
+        return &semlist[i];
+  }  
+   return find_existing_block(name);
+}
+
+int syscall_sem_p(usr_sem_t* handle) {
+  semaphore_P(handle->sem);
+    return 0;
+}
+
+int syscall_sem_v(usr_sem_t* handle) {
+  semaphore_V(handle->sem);
+    return 0;
+}
+
+int syscall_sem_destroy(usr_sem_t* handle) {
+  if(handle->sem->value <= 0)
+    return -1;
+  semaphore_destroy(handle->sem);
+  handle->name = NULL;
+  return 0;
+}
+
 
 int syscall_write(uint32_t fd, char *s, int len)
 {
@@ -115,6 +173,18 @@ void syscall_handle(context_t *user_context)
       break;
     case SYSCALL_WRITE:
       V0 = syscall_write(A1, (char *)A2, A3);
+      break;
+    case SYSCALL_SEM_OPEN:
+      V0 = (int)syscall_sem_open((char const*) A1,(int)A2);
+      break;
+    case SYSCALL_SEM_PROCURE:
+      V0 = syscall_sem_p((usr_sem_t*) A1);
+      break;
+    case SYSCALL_SEM_VACATE:
+      V0 = syscall_sem_v((usr_sem_t*) A1);
+      break;
+    case SYSCALL_SEM_DESTROY:
+      V0 = syscall_sem_destroy((usr_sem_t*) A1);
       break;
     default:
       KERNEL_PANIC("Unhandled system call\n");

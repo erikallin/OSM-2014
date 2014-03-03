@@ -51,6 +51,8 @@ void syscall_halt(void)
   _syscall(SYSCALL_HALT, 0, 0, 0);
 }
 
+typedef void usr_sem_t;
+
 
 /* Load the file indicated by 'filename' as a new process and execute
  * it. Returns the process ID of the created process. Negative values
