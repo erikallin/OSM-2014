@@ -1,7 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 
-#define STACK_MAX_SIZE 1024
+#define MAX_THREADS 5
 #include "dlList.h"
 #include <pthread.h>
 
