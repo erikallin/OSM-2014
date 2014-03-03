@@ -1,0 +1,27 @@
+
+
+Task 1 a)
+I denne har vi implementeret stacken ud fra doubly linked listen som lavet i 
+en tidligere opgave.
+Dette er gjort af hensyn til at implementeringen ikke skal have de samme begrænsninger som den udleverede kode. 
+Ved at bruge dllist (doubly linked list) vil stacken være dynamisk. 
+Derudover fungerer extract, ligesom pop, såfremt man
+altid indsætter og popper på hovedet af listen.
+\\
+Som låse er der tilføjet en mutex på extract og pop, da disse ændrer i listen.
+Derudover er der lavet en condition variable der spinlocker empty() og top()
+Denne sættes til at spinne ved start af push/pop og sættes til at stoppe efter kaldet. 
+Dette gør at flere tråde kan kalde eksempelvist empty() samtidig. 
+men derimod kan der ikke læses samtidig med at der pushes/poppes.
+\\
+
+Task 1 b)
+I denne bruges strukturen void* arg, til at passere argumentet til thread_create
+Som det første hentes rowsne ind en ad gangen i stacken.
+Derefter sættes threadsne igang en ad gangen og popper fra stacken for at få 
+argumenterne. 
+Hvis der er flere rækker end max antallet af threads, kaldes der join som venter
+på at tråden er færdig, og når de er færdige kan der laves nye tråde.
+\\
+\\
+

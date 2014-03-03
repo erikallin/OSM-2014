@@ -10,7 +10,7 @@ void stack_init(stack_t* stack) {
 }
 
 int stack_empty(stack_t* stack) {
-  while(stack->condVar) { printf("yolo\n");}
+  while(stack->condVar) { printf("Empty venter\n");}
   return stack->top == -1;
 }
 
@@ -22,11 +22,11 @@ void* stack_top(stack_t* stack) {
 }
 
 void* stack_pop(stack_t* stack) {
-  /* lås tilgangen til stakken så der ikke er samtidighedsproblemer */
+  /* Lås tilgangen til stakken så der ikke er samtidighedsproblemer */
   pthread_mutex_lock(&stack->lock);
- // stack->condVar = 1;
-  if (!stack_empty(stack)) {
-    printf("yomama");
+  stack->condVar = 1;
+  if (!stack->top == -1) {
+    printf("Popop");
     stack->top--;
     void* a = extract(stack->list,0);
     
@@ -45,14 +45,15 @@ void* stack_pop(stack_t* stack) {
 }
 
 int stack_push(stack_t* stack, void* data) {
-  /* mere lås */
-//  pthread_mutex_lock(&stack->lock);
- // stack->condVar = 1;
+  /* Mere lås */
+  pthread_mutex_lock(&stack->lock);
+  stack->condVar = 1;
   stack->top++;
   insert(stack->list,data,0);
-  printf("hey, se hvem der indsatte noget\n");
-//  pthread_mutex_unlock(&stack->lock);
- // stack->condVar = 0;
+  
+  printf("Eow, se hvem der indsatte noget\n");
+  pthread_mutex_unlock(&stack->lock);
+  stack->condVar = 0;
   return 0;
 }
 
