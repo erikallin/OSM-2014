@@ -1,0 +1,48 @@
+
+Hej Dennis:
+
+
+vm/pagetable.h har antallet af pagetable_entries
+Læs roadmap!!!!!
+
+
+Der er dobbelt så mange pages i Buenos, end hvad der fremgår
+af pagetable.h - fordi det er et sjovt styresystem.
+
+Process.c har en funktion "tlb_fill". 
+Fjern denne (ovenstående) når vi er færdige for at teste om det virker.
+Står flere steder, så fjern dem alle.
+
+Process.c har også noget dirty bit ting.
+
+Der skal ikke ændret på tlb_write, ikke skriv noget assembler (vel Martin?!?)
+
+Syscall_memlimit som sørger for at hvis nuværende process stopper på et eller andet,
+men skal ændres til at stoppe på noget senere (der ikke før memlimit er plads nok til),
+der skal linkes til plads i hukommelsen, så der er plads nok.
+
+
+Der kan aflæses et sted hvor mange pages, der er blevet brugt.
+Ud fra dette kan der på en måde ses hvor mange pages et konkret program har brugt.
+
+
+I lib.c kan der laves syscall_memlimit. Herinde er der et sted hvor der står
+"No head space left", her laves evt. mere mem.
+
+
+Denne opgave er nogenlunde åben på hvordan den laves, men ofte kan det ikke betale
+sig at ændre på allerede definerede funktioner.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

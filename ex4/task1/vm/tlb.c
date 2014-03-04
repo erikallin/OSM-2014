@@ -46,11 +46,17 @@ void tlb_modified_exception(void)
 
 void tlb_load_exception(void)
 {
-    KERNEL_PANIC("Unhandled TLB load exception");
+  tlb_exception_state_t state;
+  _tlb_get_exception_state(state);
+  
+    KERNEL_PANIC("Unha_ndled TLB load exception");
 }
 
 void tlb_store_exception(void)
 {
+  tlb_exception_state_t state;
+  _tlb_get_exception_state(state);
+
     KERNEL_PANIC("Unhandled TLB store exception");
 }
 
