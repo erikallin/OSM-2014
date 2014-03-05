@@ -39,6 +39,10 @@
 #include "vm/tlb.h"
 #include "vm/pagetable.h"
 
+//Definere en state som vi kan hente i exceptionsne
+tlb_exception_state_t* state;
+int tlb_index;
+
 void tlb_modified_exception(void)
 {
     KERNEL_PANIC("Unhandled TLB modified exception");
@@ -46,15 +50,23 @@ void tlb_modified_exception(void)
 
 void tlb_load_exception(void)
 {
-  tlb_exception_state_t state;
+//fylder en state på vores state.
   _tlb_get_exception_state(state);
-  
-    KERNEL_PANIC("Unha_ndled TLB load exception");
+//snyder og giver prober en tlb_exception_state istedet for tlb_entry
+//da probe kun bruger de 3 værdier som er gemt i exception_staten.
+//Og returnere index værdien. negativ hvis state ikke er i tlben.
+ tlb_index = _tlb_probe((tlb_entry_t*) state);
+
+//if it exists, writes the entry to tlb.
+  if(tlb_index >= 0) {
+   return  _tlb_write_random((tlb_entry_t*) state);
+  }
+//if it doesn't exist, WE*RE ALL DOOMED, DOOMED I TELL YOU, DOOOOOMED
+    KERNEL_PANIC("So ein entry gibt es ja nicht!");
 }
 
 void tlb_store_exception(void)
 {
-  tlb_exception_state_t state;
   _tlb_get_exception_state(state);
 
     KERNEL_PANIC("Unhandled TLB store exception");
