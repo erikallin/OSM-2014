@@ -4,11 +4,12 @@
 
 #include "tests/lib.h"
 
-static const size_t BUFFER_SIZE = 20;
+//static const size_t BUFFER_SIZE = 20;
 
 int main(void)
 {
-  char *name;
+  puts("Hello, world\n");
+/*  char *name;
   int count;
   heap_init();
   puts("Hello, World!\n\n");
@@ -19,11 +20,11 @@ int main(void)
     if (count == 0) {
       break;
     }
-    name[count] = 0; /* Chomp off newline */
+    name[count] = 0; 
     printf("And hello to you, %s!\n", name);
     free(name);
   }
   puts("Now I shall exit!\n");
-  syscall_exit(2);
-  return 0;
+  syscall_exit(2); */
+  return thread_get_current_thread(); 
 }

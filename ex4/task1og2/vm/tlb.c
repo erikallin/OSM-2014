@@ -33,52 +33,65 @@
  * $Id: tlb.c,v 1.6 2004/04/16 10:54:29 ttakanen Exp $
  *
  */
-
 #include "kernel/panic.h"
 #include "kernel/assert.h"
 #include "vm/tlb.h"
 #include "vm/pagetable.h"
+#include "kernel/thread.h"
 
 //Definere en state som vi kan hente i exceptionsne
-tlb_exception_state_t* state;
 int tlb_index;
+pagetable_t* pagetable;
+
 
 void tlb_modified_exception(void)
 {
-    KERNEL_PANIC("Unhandled TLB modified exception");
+//Da vi hader fejl, må vi hellere panikke.
+  kprintf("it's all tlb_modified_exceptions fault");
+    KERNEL_PANIC("Don't write if the dirty bit is 0, it's just not allowed, ok?");
 }
 
 void tlb_load_exception(void)
 {
+// kprintf("STOREAH");
+  tlb_exception_state_t state;
+  pagetable_t* pagetable;
 //fylder en state på vores state.
-  _tlb_get_exception_state(state);
-<<<<<<< HEAD:ex4/task1og2/vm/tlb.c
+ _tlb_get_exception_state(&state);
   
- // THIS IS FIND CURRENT THREAD (SPARTA).. 
- /* Thread_get_current_tread_entry(); -> page_table */
- 
-  
-    KERNEL_PANIC("Unha_ndled TLB load exception");
-=======
-//snyder og giver prober en tlb_exception_state istedet for tlb_entry
-//da probe kun bruger de 3 værdier som er gemt i exception_staten.
-//Og returnere index værdien. negativ hvis state ikke er i tlben.
- tlb_index = _tlb_probe((tlb_entry_t*) state);
+  pagetable = thread_get_current_thread_entry()->pagetable;
 
-//if it exists, writes the entry to tlb.
-  if(tlb_index >= 0) {
-   return  _tlb_write_random((tlb_entry_t*) state);
-  }
-//if it doesn't exist, WE*RE ALL DOOMED, DOOMED I TELL YOU, DOOOOOMED
-    KERNEL_PANIC("So ein entry gibt es ja nicht!");
->>>>>>> 52a3d5fad6a1544e7f09a0b0ba992263509baaa5:ex4/task1/vm/tlb.c
-}
+  _tlb_probe(pagetable->entries); 
+ if(tlb_index < 0) { 
+   KERNEL_PANIC("pagetable not found!");
+ }
 
+  for(uint32_t i = 0; i < pagetable->valid_count; i++) {
+        _tlb_write_random((tlb_entry_t*) &pagetable->entries[i]);
+  } 
+
+ }
 void tlb_store_exception(void)
 {
-  _tlb_get_exception_state(state);
+// kprintf("STOREAH");
+  tlb_exception_state_t state;
+  pagetable_t* pagetable;
+//fylder en state på vores state.
+ _tlb_get_exception_state(&state);
+  
+  pagetable = thread_get_current_thread_entry()->pagetable;
 
-    KERNEL_PANIC("Unhandled TLB store exception");
+  _tlb_probe(pagetable->entries); 
+  if(tlb_index < 0) { 
+   KERNEL_PANIC("pagetable not found!");
+  }
+
+  for(uint32_t i = 0; i < pagetable->valid_count; i++) {
+        _tlb_write_random((tlb_entry_t*) &pagetable->entries[i]);
+  } 
+
+
+
 }
 
 /**

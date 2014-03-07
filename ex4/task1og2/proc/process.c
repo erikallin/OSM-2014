@@ -166,9 +166,13 @@ void process_start(process_id_t pid)
   /* Put the mapped pages into TLB. Here we again assume that the
      pages fit into the TLB. After writing proper TLB exception
      handling this call should be skipped. */
-  intr_status = _interrupt_disable();
-  tlb_fill(my_entry->pagetable);
-  _interrupt_set_state(intr_status);
+ // intr_status = _interrupt_disable();
+
+ // HER FJERNEDE VI EN TLB_FILL
+ // tlb_fill(my_entry->pagetable);
+   _tlb_write(my_entry->pagetable->entries,0,my_entry->pagetable->valid_count);
+   _tlb_set_asid(my_entry->pagetable->ASID); 
+ // _interrupt_set_state(intr_status);
 
   /* Now we may use the virtual addresses of the segments. */
 
@@ -181,18 +185,15 @@ void process_start(process_id_t pid)
     vm_map(my_entry->pagetable, phys_page,
            elf.ro_vaddr + i*PAGE_SIZE, 1);
   }
-
   for(i = 0; i < (int)elf.rw_pages; i++) {
     phys_page = pagepool_get_phys_page();
     KERNEL_ASSERT(phys_page != 0);
     vm_map(my_entry->pagetable, phys_page,
            elf.rw_vaddr + i*PAGE_SIZE, 1);
   }
-
   /* Zero the pages. */
   memoryset((void *)elf.ro_vaddr, 0, elf.ro_pages*PAGE_SIZE);
   memoryset((void *)elf.rw_vaddr, 0, elf.rw_pages*PAGE_SIZE);
-
   stack_bottom = (USERLAND_STACK_TOP & PAGE_SIZE_MASK) -
     (CONFIG_USERLAND_STACK_SIZE-1)*PAGE_SIZE;
   memoryset((void *)stack_bottom, 0, CONFIG_USERLAND_STACK_SIZE*PAGE_SIZE);
@@ -215,16 +216,16 @@ void process_start(process_id_t pid)
                   == (int)elf.rw_size);
   }
 
-
   /* Set the dirty bit to zero (read-only) on read-only pages. */
   for(i = 0; i < (int)elf.ro_pages; i++) {
     vm_set_dirty(my_entry->pagetable, elf.ro_vaddr + i*PAGE_SIZE, 0);
   }
 
   /* Insert page mappings again to TLB to take read-only bits into use */
-  intr_status = _interrupt_disable();
-  tlb_fill(my_entry->pagetable);
-  _interrupt_set_state(intr_status);
+ // intr_status = _interrupt_disable();
+ // tlb_fill(my_entry->pagetable);
+  _tlb_set_asid(thread_get_current_thread());
+ // _interrupt_set_state(intr_status);
 
 
   /* Initialize the user context. (Status register is handled by
