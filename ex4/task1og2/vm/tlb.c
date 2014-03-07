@@ -1,5 +1,5 @@
 /*
- * Userland halt
+ * TLB handling
  *
  * Copyright (C) 2003 Juha Aatrokoski, Timo Lilja,
  *   Leena Salmela, Teemu Takanen, Aleksi Virtanen.
@@ -30,15 +30,63 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: halt.c,v 1.1 2003/05/21 14:43:51 tlilja Exp $
+ * $Id: tlb.c,v 1.6 2004/04/16 10:54:29 ttakanen Exp $
  *
  */
 
-#include "tests/lib.h"
+#include "kernel/panic.h"
+#include "kernel/assert.h"
+#include "vm/tlb.h"
+#include "vm/pagetable.h"
 
-int main(void)
+void tlb_modified_exception(void)
 {
-    syscall_halt();
+    KERNEL_PANIC("Unhandled TLB modified exception");
+}
 
-    return 0;
+void tlb_load_exception(void)
+{
+  tlb_exception_state_t state;
+  _tlb_get_exception_state(state);
+  
+ // THIS IS FIND CURRENT THREAD (SPARTA).. 
+ /* Thread_get_current_tread_entry(); -> page_table */
+ 
+  
+    KERNEL_PANIC("Unha_ndled TLB load exception");
+}
+
+void tlb_store_exception(void)
+{
+  tlb_exception_state_t state;
+  _tlb_get_exception_state(state);
+
+    KERNEL_PANIC("Unhandled TLB store exception");
+}
+
+/**
+ * Fill TLB with given pagetable. This function is used to set memory
+ * mappings in CP0's TLB before we have a proper TLB handling system.
+ * This approach limits the maximum mapping size to 128kB.
+ *
+ * @param pagetable Mappings to write to TLB.
+ *
+ */
+
+void tlb_fill(pagetable_t *pagetable)
+{
+    if(pagetable == NULL)
+	return;
+
+    /* Check that the pagetable can fit into TLB. This is needed until
+     we have proper VM system, because the whole pagetable must fit
+     into TLB. */
+    KERNEL_ASSERT(pagetable->valid_count <= (_tlb_get_maxindex()+1));
+
+    _tlb_write(pagetable->entries, 0, pagetable->valid_count);
+
+    /* Set ASID field in Co-Processor 0 to match thread ID so that
+       only entries with the ASID of the current thread will match in
+       the TLB hardware. */
+    _tlb_set_asid(pagetable->ASID);
 }

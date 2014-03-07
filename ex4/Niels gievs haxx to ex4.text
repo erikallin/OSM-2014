@@ -1,7 +1,3 @@
-
-Hej Dennis:
-
-
 vm/pagetable.h har antallet af pagetable_entries
 Læs roadmap!!!!!
 
@@ -33,6 +29,9 @@ I lib.c kan der laves syscall_memlimit. Herinde er der et sted hvor der står
 Denne opgave er nogenlunde åben på hvordan den laves, men ofte kan det ikke betale
 sig at ændre på allerede definerede funktioner.
 
+
+Idé fra DD under forelæsning fredag.
+Thread_get_current_tread_entry(); -> page_table
 
 
 
