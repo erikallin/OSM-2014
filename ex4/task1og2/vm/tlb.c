@@ -61,7 +61,7 @@ void tlb_load_exception(void)
   
   pagetable = thread_get_current_thread_entry()->pagetable;
 
-  _tlb_probe(pagetable->entries); 
+ _tlb_probe(pagetable->entries); 
  if(tlb_index < 0) { 
    KERNEL_PANIC("pagetable not found!");
  }

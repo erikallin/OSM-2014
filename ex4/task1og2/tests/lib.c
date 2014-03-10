@@ -41,7 +41,7 @@
 
 #include "proc/syscall.h"
 #include "tests/lib.h"
-
+#define PAGE_SIZE 4096
 
 /* Halt the system (sync disks and power off). This function will
  * never return. 
@@ -736,15 +736,17 @@ static const size_t MIN_ALLOC_SIZE = sizeof(free_block_t);
 
 free_block_t *free_list;
 
-byte heap[HEAP_SIZE];
+//Sætter heapstart til processens start heap_end
+  int heap_start = (int) syscall_memlimit((void*) NULL);
+//byte heap[HEAP_SIZE];
 
 /* Initialise the heap - malloc et al won't work unless this is called
    first. */
 void heap_init()
 {
-  free_list = (free_block_t*) heap;
+/*  free_list = (free_block_t*) heap;
   free_list->size = HEAP_SIZE;
-  free_list->next = NULL;
+  free_list->next = NULL; */
 }
 
 
@@ -753,6 +755,14 @@ void heap_init()
 void *malloc(size_t size) {
   free_block_t *block;
   free_block_t **prev_p; /* Previous link so we can remove an element */
+  //hvis free_list ikke er brugt endnu (listen er tom)
+   if(free_list == NULL) {
+  //sætter size til at pege på heap_start + en page side.
+   (int) free_list->size = (int) syscall_memlimit((void*)(heap_start + PAGE_SIZE));
+  //sætter free_list til at starte på heapstart + sizeof(free_list)
+   free_list = (free_block_t*) (heap_start + sizeof(free_list)); 
+   }
+
   if (size == 0) {
     return NULL;
   }
@@ -788,7 +798,10 @@ void *malloc(size_t size) {
   }
 
   /* No heap space left. */
-  return NULL;
+  //Da der ikke er space tilbage, mapper vi mere og sætter free_list->size lig sidste addresserbare byte.
+  free_list->size = (int) syscall_memlimit((void*)(free_list->size + PAGE_SIZE));
+  //kalder malloc igen, nu med mere plads
+  return malloc(size);
 }
 
 /* Return the block pointed to by ptr to the free pool. */
