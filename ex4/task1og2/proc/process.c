@@ -121,7 +121,6 @@ void process_start(process_id_t pid)
   interrupt_status_t intr_status;
 
   my_entry = thread_get_current_thread_entry();
-  kprintf("%d, se mit trådnr\n",thread_get_current_thread());
   my_entry->process_id = pid;
   executable = process_table[pid].executable;
 
