@@ -170,8 +170,8 @@ void process_start(process_id_t pid)
 
  // HER FJERNEDE VI EN TLB_FILL
  // tlb_fill(my_entry->pagetable);
-   _tlb_write(my_entry->pagetable->entries,0,my_entry->pagetable->valid_count);
-   _tlb_set_asid(my_entry->pagetable->ASID); 
+  // _tlb_write(my_entry->pagetable->entries,0,my_entry->pagetable->valid_count);
+  // _tlb_set_asid(my_entry->pagetable->ASID); 
  // _interrupt_set_state(intr_status);
 
   /* Now we may use the virtual addresses of the segments. */
@@ -224,7 +224,7 @@ void process_start(process_id_t pid)
   /* Insert page mappings again to TLB to take read-only bits into use */
  // intr_status = _interrupt_disable();
  // tlb_fill(my_entry->pagetable);
-  _tlb_set_asid(thread_get_current_thread());
+ // _tlb_set_asid(thread_get_current_thread());
  // _interrupt_set_state(intr_status);
 
 

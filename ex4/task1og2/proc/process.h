@@ -66,6 +66,8 @@ typedef struct {
     process_id_t prev_zombie; /* PID of previous zombie sibling. */
     process_id_t next_zombie; /* PID of next zombie sibling. */
     int children; /* Number of nonjoined child processes. */
+    //TILFØJET TIL memlimit.
+    void* heap_end;
 } process_table_t;
 
 /* Run process in new thread, returns PID of new process. */
@@ -84,5 +86,6 @@ int process_join(process_id_t pid);
 int process_fork(void (*func)(uint32_t), uint32_t arg);
 
 void process_init(void);
+
 
 #endif

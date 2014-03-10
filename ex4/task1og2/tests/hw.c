@@ -26,5 +26,5 @@ int main(void)
   }
   puts("Now I shall exit!\n");
   syscall_exit(2); */
-  return thread_get_current_thread(); 
+  return 42; 
 }
