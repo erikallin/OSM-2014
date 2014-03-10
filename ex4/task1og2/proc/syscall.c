@@ -49,15 +49,19 @@
 
 
 void* syscall_memlimit(void* heap_end) {
+  void* old_heap_end = process_get_current_process_entry()->heap_end;
   //tjekker for om heap_end er NULL
   if(heap_end == NULL) 
-    return process_get_current_process_entry()->heap_end;
+    return old_heap_end;
   //tjekker for at heap end er større end nuværende heap end.
-  if(heap_end > process_get_current_process_entry()->heap_end) {
+  if(heap_end > old_heap_end) {
     //inden vi pimper entryen og ændrer den. burde vi nok mappe noget plads
+    for(int i = 0; i < (int)((heap_end - old_heap_end) / PAGE_SIZE)-1; i++) {
     vm_map(thread_get_current_thread_entry()->pagetable,
-    pagepool_get_phys_page(),(int) heap_end, 1);
- 
+    pagepool_get_phys_page(),(int) heap_end-i*PAGE_SIZE, 1);
+
+    }
+    //sætter processens heap_end til den nye heap_end 
     process_get_current_process_entry()->heap_end = heap_end;
     return heap_end;
   }
@@ -135,6 +139,9 @@ void syscall_handle(context_t *user_context)
       break;
     case SYSCALL_WRITE:
       V0 = syscall_write(A1, (char *)A2, A3);
+      break;
+    case SYSCALL_MEMLIMIT:
+      V0 = (int) syscall_memlimit((void*)A1);
       break;
     default:
       KERNEL_PANIC("Unhandled system call\n");

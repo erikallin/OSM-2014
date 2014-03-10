@@ -8,6 +8,7 @@
 
 int main(void)
 {
+  syscall_memlimit((void*)(20*4096));
   puts("Hello, world\n");
 /*  char *name;
   int count;

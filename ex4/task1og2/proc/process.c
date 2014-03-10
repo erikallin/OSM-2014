@@ -69,6 +69,7 @@ void process_init()
   spinlock_reset(&process_table_slock);
   for (i = 0; i <= PROCESS_MAX_PROCESSES; ++i)
     process_reset(i);
+ 
 }
 
 
@@ -115,15 +116,12 @@ void process_start(process_id_t pid)
   elf_info_t elf;
   openfile_t file;
   char *executable;
-
   int i;
-
   interrupt_status_t intr_status;
 
   my_entry = thread_get_current_thread_entry();
   my_entry->process_id = pid;
   executable = process_table[pid].executable;
-
   /* If the pagetable of this thread is not NULL, we are trying to
      run a userland process for a second time in the same thread.
      This is not possible. */
@@ -156,6 +154,10 @@ void process_start(process_id_t pid)
                 <= _tlb_get_maxindex() + 1);
 
   /* Allocate and map stack */
+
+  //Gemmer plads i heapet til trådens 3 start sider. 
+
+  process_get_current_process_entry()->heap_end += (3*4096);
   for(i = 0; i < CONFIG_USERLAND_STACK_SIZE; i++) {
     phys_page = pagepool_get_phys_page();
     KERNEL_ASSERT(phys_page != 0);
@@ -177,7 +179,7 @@ void process_start(process_id_t pid)
   /* Now we may use the virtual addresses of the segments. */
 
   /* Allocate and map pages for the segments. We assume that
-     segments begin at page boundary. (The linker script in tests
+     
      directory creates this kind of segments) */
   for(i = 0; i < (int)elf.ro_pages; i++) {
     phys_page = pagepool_get_phys_page();
