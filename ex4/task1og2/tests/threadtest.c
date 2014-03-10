@@ -12,7 +12,8 @@ int main(void)
   int ret2;
   int ret3;
   int ret4;
-
+  int i;
+for(i = 0; i < 10;i++) {
   printf("Starting program %s\n", prog);
   child = syscall_exec(prog);
   child2 = syscall_exec(prog);
@@ -28,6 +29,7 @@ int main(void)
   printf("Child joined with status: %d\n", ret2);
   printf("Child joined with status: %d\n", ret3);
   printf("Child joined with status: %d\n", ret4);
+   }
   syscall_halt();
   return 0;
 }

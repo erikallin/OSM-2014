@@ -44,6 +44,26 @@
 #include "drivers/gcd.h"
 #include "fs/vfs.h"
 #include "kernel/thread.h"
+#include "vm/vm.h"
+#include "vm/pagepool.h"
+
+
+void* syscall_memlimit(void* heap_end) {
+  //tjekker for om heap_end er NULL
+  if(heap_end == NULL) 
+    return process_get_current_process_entry()->heap_end;
+  //tjekker for at heap end er større end nuværende heap end.
+  if(heap_end > process_get_current_process_entry()->heap_end) {
+    //inden vi pimper entryen og ændrer den. burde vi nok mappe noget plads
+    vm_map(thread_get_current_thread_entry()->pagetable,
+    pagepool_get_phys_page(),(int) heap_end, 1);
+ 
+    process_get_current_process_entry()->heap_end = heap_end;
+    return heap_end;
+  }
+  return NULL;
+}
+
 
 int syscall_write(uint32_t fd, char *s, int len)
 {
