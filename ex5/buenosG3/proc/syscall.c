@@ -103,9 +103,16 @@ int syscall_sem_destroy(usr_sem_t* handle) {
 }
 
 
-int syscall_write(uint32_t fd, char *s, int len)
-{
-  gcd_t *gcd;
+int syscall_open(char const *pathname) {
+  return (int) vfs_open(pathname)
+}
+
+int syscall_close(int filehandle) {
+  return (int) vfs_close(filehandle);
+}
+
+int syscall_write(int filehandle, void const *buffer, int length) {
+/*  gcd_t *gcd;
   device_t *dev;
   if (fd == FILEHANDLE_STDOUT || fd == FILEHANDLE_STDERR) {
     dev = device_get(YAMS_TYPECODE_TTY, 0);
@@ -114,12 +121,12 @@ int syscall_write(uint32_t fd, char *s, int len)
   } else {
     KERNEL_PANIC("Write syscall not finished yet.");
     return 0;
-  }
+  }*/
+  return (int) vfs_write(filehandle, buffer, length);
 }
 
-int syscall_read(uint32_t fd, char *s, int len)
-{
-  gcd_t *gcd;
+int syscall_read(int filehandle, void *buffer, int length) {
+/*  gcd_t *gcd;
   device_t *dev;
   if (fd == FILEHANDLE_STDIN) {
     dev = device_get(YAMS_TYPECODE_TTY, 0);
@@ -128,8 +135,33 @@ int syscall_read(uint32_t fd, char *s, int len)
   } else {
     KERNEL_PANIC("Read syscall not finished yet.");
     return 0;
-  }
+  }*/
+  return (int) vfs_read(filehandle, buffer, length);
 }
+
+int syscall_seek(int filehandle, int offset) {
+  return (int) vfs_seek(filehandle, offset);
+}
+
+int syscall_create(char const *pathname, int size) {
+  return (int) vfs_create(pathname, size);
+}
+
+int syscall_delete(char const *pathname) {
+  return (int) vfs_remove(pathname);
+}
+
+
+/* Task 2 */
+int syscall_filecount(char const *name) {
+  if (name == NULL) {
+    /* Tæl mountede systemer */
+    vfs_mount(NULL, name);
+  }
+  else
+    /* Tæl filer i den givne mount */ ;
+}
+
 
 /**
 * Handle system calls. Interrupts are enabled when this function is
@@ -143,9 +175,9 @@ void syscall_handle(context_t *user_context)
   int A1 = user_context->cpu_regs[MIPS_REGISTER_A1];
   int A2 = user_context->cpu_regs[MIPS_REGISTER_A2];
   int A3 = user_context->cpu_regs[MIPS_REGISTER_A3];
-  
+
   #define V0 (user_context->cpu_regs[MIPS_REGISTER_V0])
-  
+
   /* When a syscall is executed in userland, register a0 contains
   * the number of the syscall. Registers a1, a2 and a3 contain the
   * arguments of the syscall. The userland code expects that after
@@ -186,13 +218,21 @@ void syscall_handle(context_t *user_context)
     case SYSCALL_SEM_DESTROY:
     V0 = syscall_sem_destroy((usr_sem_t*) A1);
     break;
+    case SYSCALL_CREATE:
+    V0 = syscall_create((char const*) A1, (int) A2);
+    break;
+    case SYSCALL_DELETE:
+    V0 = syscall_delete((char const*) A1);
+    break;
+    case SYSCALL_SEEK:
+    V0 = syscall_seek((int) A1, (int) A2);
     default:
     KERNEL_PANIC("Unhandled system call\n");
   }
-  
+
   /* Move to next instruction after system call */
   user_context->pc += 4;
-  
+
   #undef V0
-  
+
 }
