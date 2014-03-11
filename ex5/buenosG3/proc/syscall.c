@@ -104,11 +104,11 @@ int syscall_sem_destroy(usr_sem_t* handle) {
 
 
 int syscall_open(char const *pathname) {
-  return (int) vfs_open(pathname)
+  return (int) (vfs_open(pathname)+3);
 }
 
 int syscall_close(int filehandle) {
-  return (int) vfs_close(filehandle);
+  return (int) vfs_close(filehandle-3);
 }
 
 int syscall_write(int filehandle, void const *buffer, int length) {
@@ -226,6 +226,12 @@ void syscall_handle(context_t *user_context)
     break;
     case SYSCALL_SEEK:
     V0 = syscall_seek((int) A1, (int) A2);
+    break;
+    case SYSCALL_OPEN:
+    V0 = syscall_open((char const*) A1);
+    break;
+    case SYSCALL_CLOSE:
+    V0 = syscall_close((int) A1);
     default:
     KERNEL_PANIC("Unhandled system call\n");
   }
