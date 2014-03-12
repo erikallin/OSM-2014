@@ -112,35 +112,31 @@ int syscall_close(int filehandle) {
 }
 
 int syscall_write(int filehandle, void const *buffer, int length) {
-/*  gcd_t *gcd;
+  gcd_t *gcd;
   device_t *dev;
   if (fd == FILEHANDLE_STDOUT || fd == FILEHANDLE_STDERR) {
     dev = device_get(YAMS_TYPECODE_TTY, 0);
     gcd = (gcd_t *)dev->generic_device;
     return gcd->write(gcd, s, len);
   } else {
-    KERNEL_PANIC("Write syscall not finished yet.");
-    return 0;
-  }*/
-  return (int) vfs_write(filehandle, buffer, length);
+  return (int) vfs_write(filehandle-3, buffer, length);
+  }
 }
 
 int syscall_read(int filehandle, void *buffer, int length) {
-/*  gcd_t *gcd;
+  gcd_t *gcd;
   device_t *dev;
   if (fd == FILEHANDLE_STDIN) {
     dev = device_get(YAMS_TYPECODE_TTY, 0);
     gcd = (gcd_t *)dev->generic_device;
     return gcd->read(gcd, s, len);
   } else {
-    KERNEL_PANIC("Read syscall not finished yet.");
-    return 0;
-  }*/
-  return (int) vfs_read(filehandle, buffer, length);
+  return (int) vfs_read(filehandle-3, buffer, length);
+  }
 }
 
 int syscall_seek(int filehandle, int offset) {
-  return (int) vfs_seek(filehandle, offset);
+  return (int) vfs_seek(filehandle-3, offset);
 }
 
 int syscall_create(char const *pathname, int size) {
