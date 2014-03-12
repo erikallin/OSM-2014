@@ -20,12 +20,18 @@ int cmd_echo(int, char**);
 int cmd_show(int, char**);
 int cmd_read(int, char**);
 int cmd_help();
+int cmd_exit();
+int cmd_rm(int, char**);
+int cmd_cp(int, char**);
 
 cmd_t commands[] =
   { {"echo", cmd_echo, "print the arguments to the screen"},
     {"show", cmd_show, "print the contents of the given file to the screen"},
     {"read", cmd_read, "read a line from standard in and write it to a new file"},
-    {"help", cmd_help, "show this help message"}
+    {"help", cmd_help, "show this help message"},
+    {"exit", cmd_exit, "Terminates the shell"},
+    {"rm", cmd_rm, "Remove file" },
+    {"cp", cmd_cp, "Copy content of one file to another"}
   };
 #define N_COMMANDS sizeof(commands) / sizeof(cmd_t)
 
@@ -174,3 +180,76 @@ int cmd_help() {
   help();
   return 0;
 }
+int cmd_exit() {
+  puts("Exiting the system\n");
+  syscall_halt();
+  return 0;
+}
+
+//Hard to test without files
+int cmd_rm(int argv, char** argc) {
+  syscall_delete(argc[1]);
+  return argv;
+} 
+
+int cmd_cp(int argv, char** argc) {
+  if(argv < 2) { 
+    printf("Not enough arguments in cp\n");
+    return 0;
+  } 
+ 
+  char buffer[BUFFER_SIZE];
+  //gør filerne klar til brug
+  int file1 = syscall_open(argc[1]);
+  int file2 = syscall_open(argc[2]);
+  //Read og write, burde starte hvor der sidst har været læst. 
+  //læser byte for byte
+  while(syscall_read(file1, buffer, 1)) {
+    syscall_write(file2, buffer, 1);
+  }
+  return 0;
+}
+
+int cmd_cmp(int argv, char** argc) {
+  if(argv < 2) {
+   printf("Not enough arguments in cmp\n");
+   return 0;
+  }
+  char buffer[BUFFER_SIZE];
+  char buffer2[BUFFER_SIZE];
+  int file1 = syscall_open(argc[1]);
+  int file2 = syscall_open(argc[2]);
+  
+  while(syscall_read(file1, buffer, 1) && syscall_read(file2, buffer, 1)) {
+    if(!(buffer == buffer2)) {
+      printf("files are not equal\n");
+      return 0;
+    }
+  }
+  printf("Files are equal\n");
+  return 1;
+}
+
+
+/*
+int toInt(char* s) {
+int value = 0;
+while (*s >= '0' && *s <= '9') {
+    value = 10*value + (int)(*s - '0');
+    s++;
+  }
+
+  return value;
+}
+
+//mk is still working out the kinks
+int cmd_mk(int argv, char** argc) {
+
+  puts("Hello, World!");
+  printf("%s\n",argc[1]);
+  printf("%d\n", toInt(argc[2]));
+  syscall_create(argc[1],toInt(argc[2]));
+  return argv;
+}
+*/
+

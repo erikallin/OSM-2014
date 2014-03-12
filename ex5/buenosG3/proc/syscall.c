@@ -104,7 +104,7 @@ int syscall_sem_destroy(usr_sem_t* handle) {
 
 
 int syscall_open(char const *pathname) {
-  return (int) (vfs_open(pathname)+3);
+  return (int) (vfs_open((char*)pathname)+3);
 }
 
 int syscall_close(int filehandle) {
@@ -114,22 +114,22 @@ int syscall_close(int filehandle) {
 int syscall_write(int filehandle, void const *buffer, int length) {
   gcd_t *gcd;
   device_t *dev;
-  if (fd == FILEHANDLE_STDOUT || fd == FILEHANDLE_STDERR) {
+  if (filehandle == FILEHANDLE_STDOUT || filehandle == FILEHANDLE_STDERR) {
     dev = device_get(YAMS_TYPECODE_TTY, 0);
     gcd = (gcd_t *)dev->generic_device;
-    return gcd->write(gcd, s, len);
+    return gcd->write(gcd, buffer, length);
   } else {
-  return (int) vfs_write(filehandle-3, buffer, length);
+  return (int) vfs_write(filehandle-3,(void*) buffer, length);
   }
 }
 
 int syscall_read(int filehandle, void *buffer, int length) {
   gcd_t *gcd;
   device_t *dev;
-  if (fd == FILEHANDLE_STDIN) {
+  if (filehandle == FILEHANDLE_STDIN) {
     dev = device_get(YAMS_TYPECODE_TTY, 0);
     gcd = (gcd_t *)dev->generic_device;
-    return gcd->read(gcd, s, len);
+    return gcd->read(gcd, buffer, length);
   } else {
   return (int) vfs_read(filehandle-3, buffer, length);
   }
@@ -140,24 +140,31 @@ int syscall_seek(int filehandle, int offset) {
 }
 
 int syscall_create(char const *pathname, int size) {
-  return (int) vfs_create(pathname, size);
+  return (int) vfs_create((char*)pathname, size);
 }
 
 int syscall_delete(char const *pathname) {
-  return (int) vfs_remove(pathname);
+  return (int) vfs_remove((char*)pathname);
 }
 
 
 /* Task 2 */
-int syscall_filecount(char const *name) {
+/*int syscall_filecount(char const *name) {
   if (name == NULL) {
-    /* Tæl mountede systemer */
-    vfs_mount(NULL, name);
+    // Tæl mountede systemer 
+  //  vfs_mount(NULL, name);
   }
   else
-    /* Tæl filer i den givne mount */ ;
-}
+    // Tæl filer i den givne mount  
+    
+  return 0;
+}*/
 
+//int syscall_file(char const* name, int index, char* buffer) {
+
+
+ // return 0;
+//}
 
 /**
 * Handle system calls. Interrupts are enabled when this function is
@@ -228,6 +235,12 @@ void syscall_handle(context_t *user_context)
     break;
     case SYSCALL_CLOSE:
     V0 = syscall_close((int) A1);
+    case SYSCALL_FILECOUNT: 
+   // V0 = syscall_filecount((char const*) A1);
+    break;
+    case SYSCALL_FILE:
+  //  V0 = syscall_file((char const*) A1, (int) A2, (char*) A3);
+    break;
     default:
     KERNEL_PANIC("Unhandled system call\n");
   }
