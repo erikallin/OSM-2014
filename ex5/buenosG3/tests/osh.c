@@ -23,6 +23,7 @@ int cmd_help();
 int cmd_exit();
 int cmd_rm(int, char**);
 int cmd_cp(int, char**);
+int cmd_cmp(int, char**);
 
 cmd_t commands[] =
   { {"echo", cmd_echo, "print the arguments to the screen"},
@@ -31,7 +32,8 @@ cmd_t commands[] =
     {"help", cmd_help, "show this help message"},
     {"exit", cmd_exit, "Terminates the shell"},
     {"rm", cmd_rm, "Remove file" },
-    {"cp", cmd_cp, "Copy content of one file to another"}
+    {"cp", cmd_cp, "Copy content of one file to another"},
+    {"cmp",cmd_cmp, "Compare content of one file to another"}
   };
 #define N_COMMANDS sizeof(commands) / sizeof(cmd_t)
 
@@ -180,6 +182,7 @@ int cmd_help() {
   help();
   return 0;
 }
+
 int cmd_exit() {
   puts("Exiting the system\n");
   syscall_halt();
@@ -187,69 +190,121 @@ int cmd_exit() {
 }
 
 //Hard to test without files
-int cmd_rm(int argv, char** argc) {
-  syscall_delete(argc[1]);
-  return argv;
+int cmd_rm(int argc, char** argv) {
+  if(argc < 1) {
+    printf("Not enough arguments for remove\n");
+    return 0;
+  }
+  syscall_delete(argv[1]);
+  printf("Removed file %s\n",argv[1]); 
+  return argc;
 } 
 
-int cmd_cp(int argv, char** argc) {
-  if(argv < 2) { 
-    printf("Not enough arguments in cp\n");
-    return 0;
-  } 
- 
-  char buffer[BUFFER_SIZE];
-  //gør filerne klar til brug
-  int file1 = syscall_open(argc[1]);
-  int file2 = syscall_open(argc[2]);
-  //Read og write, burde starte hvor der sidst har været læst. 
-  //læser byte for byte
-  while(syscall_read(file1, buffer, 1)) {
-    syscall_write(file2, buffer, 1);
+int cmd_cp(int argc, char** argv) {
+  if (argc != 3) {
+    printf("Usage: show <file> <file>\n");
+    return 1;
   }
-  return 0;
-}
-
-int cmd_cmp(int argv, char** argc) {
-  if(argv < 2) {
-   printf("Not enough arguments in cmp\n");
-   return 0;
+  int fd;
+  int fe;
+  if ((fd=syscall_open(argv[1])) < 0) {
+    printf("Could not open %s.  Reason: %d\n", argv[1], fd);
+    return 1;
   }
   char buffer[BUFFER_SIZE];
-  char buffer2[BUFFER_SIZE];
-  int file1 = syscall_open(argc[1]);
-  int file2 = syscall_open(argc[2]);
-  
-  while(syscall_read(file1, buffer, 1) && syscall_read(file2, buffer, 1)) {
-    if(!(buffer == buffer2)) {
-      printf("files are not equal\n");
-      return 0;
+  //Hvis fil 2 ikke findes i forvejen:
+  printf("fuakTard\n");
+  if ((fe=syscall_open(argv[2])) < 0) {
+   printf("oh fuck\n");
+   int counter=0;
+   int size=0;
+    while ((counter = syscall_read(fd, buffer, BUFFER_SIZE))) {
+      printf("while counter = sysc...%d\n", counter);
+      size += counter;
+    }
+    printf("%d\n",size);
+    syscall_create(argv[2],size);
+    printf("jeg blev sur\n");
+  }
+  syscall_close(fd);
+  fd=syscall_open(argv[1]);
+  int rd;
+  fe = syscall_open(argv[2]);
+  while ((rd = syscall_read(fd, buffer, BUFFER_SIZE))) {
+    printf("rd = sys..");
+    int wr=0;
+    int thiswr=0;
+    while (wr < rd) {
+      printf("wr < rd 2");
+      if ((thiswr = syscall_write(fe, buffer+wr, rd-wr)) <= 0) {
+        printf("\nCall to syscall_write() failed.  Reason: %d.\n", wr);
+        syscall_close(fd);
+        syscall_close(fe);
+        return 1;
+      }
+      wr += thiswr;
     }
   }
-  printf("Files are equal\n");
-  return 1;
+  if (rd < 0) {
+    printf("\nCall to syscall_read() failed.  Reason: %d.\n", rd);
+    syscall_close(fd);
+    syscall_close(fe);
+    return 1;
+  } else {
+    syscall_close(fd);
+    syscall_close(fe);
+    return 0;
+  }
 }
 
-
-/*
-int toInt(char* s) {
-int value = 0;
-while (*s >= '0' && *s <= '9') {
-    value = 10*value + (int)(*s - '0');
-    s++;
+int cmd_cmp(int argc, char** argv) {
+ if (argc != 3) {
+    printf("Usage: show <file> <file>\n");
+    return 1;
+  }
+  int fd;
+  int fe;
+  if ((fd=syscall_open(argv[1])) < 0) {
+    printf("Could not open %s.  Reason: %d\n", argv[1], fd);
+    return 1;
+  }
+  if ((fe=syscall_open(argv[2])) < 0) {
+    printf("Could not open %s. Reason: %d\n", argv[2], fe);
   }
 
-  return value;
+  int rd;
+  char buffer[BUFFER_SIZE];
+  char buffer2[BUFFER_SIZE];
+  while ((rd = syscall_read(fd, buffer, BUFFER_SIZE))) {
+    if (rd != syscall_read(fe, buffer2, BUFFER_SIZE)) {
+      printf("The files are not equal\n");
+      return 0;
+    }
+    int wr = 0;
+    while (wr < rd) {
+      if ((buffer[wr] != buffer2[wr])) {
+        printf("The files are not equal, who would've thought\n");
+        syscall_close(fd);
+        syscall_close(fe);
+        return 1;
+      }
+      wr++;
+    }
+  }
+  if (rd < 0) {
+    printf("\nCall to syscall_read() failed.  Reason: %d.\n", rd);
+    syscall_close(fd);
+    syscall_close(fe);
+    return 1;
+  } else {
+    printf("\nThe files are equal! yey\n");
+    syscall_close(fd);
+    syscall_close(fe);
+    return 0;
+  }
 }
 
-//mk is still working out the kinks
-int cmd_mk(int argv, char** argc) {
 
-  puts("Hello, World!");
-  printf("%s\n",argc[1]);
-  printf("%d\n", toInt(argc[2]));
-  syscall_create(argc[1],toInt(argc[2]));
-  return argv;
-}
-*/
+
+
 
