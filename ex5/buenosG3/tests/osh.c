@@ -212,32 +212,31 @@ int cmd_cp(int argc, char** argv) {
     return 1;
   }
   char buffer[BUFFER_SIZE];
-  //Hvis fil 2 ikke findes i forvejen:
-  printf("fuakTard\n");
-  if ((fe=syscall_open(argv[2])) < 0) {
-   printf("oh fuck\n");
+  //Tjekker om fil 2 findes, sletter hvis den gør
+  //if((fe = syscall_open(argv[2]) >= 0)) {
+  //lukker for at undgå uforudsete fejl
+  // syscall_close(fe);
+   syscall_delete(argv[2]);
+ // }
+  //laver fil med fil2 navn, med størrelse som fil1.
    int counter=0;
    int size=0;
     while ((counter = syscall_read(fd, buffer, BUFFER_SIZE))) {
-      printf("while counter = sysc...%d\n", counter);
       size += counter;
     }
     printf("%d\n",size);
     syscall_create(argv[2],size);
-    printf("jeg blev sur\n");
-  }
+  
   syscall_close(fd);
   fd=syscall_open(argv[1]);
   int rd;
   fe = syscall_open(argv[2]);
   while ((rd = syscall_read(fd, buffer, BUFFER_SIZE))) {
-    printf("rd = sys..");
     int wr=0;
     int thiswr=0;
     while (wr < rd) {
       printf("wr < rd 2");
       if ((thiswr = syscall_write(fe, buffer+wr, rd-wr)) <= 0) {
-        printf("\nCall to syscall_write() failed.  Reason: %d.\n", wr);
         syscall_close(fd);
         syscall_close(fe);
         return 1;
