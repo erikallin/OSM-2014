@@ -824,11 +824,11 @@ int tfs_filecount(fs_t *fs) {
   tfs_t *tfs = (tfs_t *)fs->internal;
   int count = 0;
   for(int i=0;(uint32_t) i < TFS_MAX_FILES;i++) {
-    if(tfs->buffer_md[i].name != NULL) 
+    if(stringcmp(tfs->buffer_md[i].name,""))
       count++;
   }   
   return count;
 
-}
+} 
 
 /** @} */

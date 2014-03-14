@@ -151,7 +151,7 @@ int syscall_delete(char const *pathname) {
 /* Task 2 */
 int syscall_filecount(char const *name) {
    return (int) vfs_filecount((char*) name); 
-}
+} 
 
 //int syscall_file(char const* name, int index, char* buffer) {
 
@@ -228,6 +228,7 @@ void syscall_handle(context_t *user_context)
     break;
     case SYSCALL_CLOSE:
     V0 = syscall_close((int) A1);
+    break;
     case SYSCALL_FILECOUNT: 
     V0 = syscall_filecount((char const*) A1);
     break;

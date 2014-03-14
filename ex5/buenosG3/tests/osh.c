@@ -68,6 +68,7 @@ int tokenize(char* cmdline, char** argv) {
 }
 
 int run_program(char* prog) {
+  printf("run_program, %s\n",prog);
   return syscall_join(syscall_exec(prog));
 }
 
@@ -167,6 +168,7 @@ int cmd_read(int argc, char** argv) {
     printf("Could not create %s with initial size %d.  Reason: %d\n", argv[1], count, ret);
     return 1;
   }
+  printf("nu har vi forsøgt create\n");
   if ((fd=syscall_open(argv[1])) < 0) {
     printf("Could not open %s.  Reason: %d\n", argv[1], fd);
     return 1;
@@ -176,7 +178,9 @@ int cmd_read(int argc, char** argv) {
     syscall_close(fd);
     return 1;
   }
+  printf("mon dog?\n");
   syscall_close(fd);
+  printf("watisevengoingo\n");
   return 0;
 }
 
@@ -306,10 +310,15 @@ int cmd_cmp(int argc, char** argv) {
 }
 
 int cmd_fcount(int argc, char** argv) {
+ //giver null hvis der kun er 1 argument
+ if(argc >= 2) {
  printf("%d\n",syscall_filecount(argv[1]));
-   return argc;
+   return syscall_filecount(argv[1]); 
+ }
+ //Giver null hvis der kun er 1 argument
+ printf("%d\n",syscall_filecount(NULL));
+   return syscall_filecount(NULL);
 
-}
-
+} 
 
 

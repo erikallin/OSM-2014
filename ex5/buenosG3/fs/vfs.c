@@ -623,20 +623,19 @@ int vfs_close(openfile_t file)
     openfile_entry_t *openfile;
     fs_t *fs;
     int ret;
-
     if (vfs_start_op() != VFS_OK)
         return VFS_UNUSABLE;
-
     semaphore_P(openfile_table.sem);
 
     openfile = vfs_verify_open(file);
     fs = openfile->filesystem;
 
     ret = fs->close(fs, openfile->fileid);
+
     openfile->filesystem = NULL;
 
     semaphore_V(openfile_table.sem);
-    
+   
     vfs_end_op();
     return ret;
 }
@@ -904,11 +903,10 @@ int vfs_filecount(char* filesystem) {
     }
     return count;
   }
+  count = 0;
   fs = vfs_get_filesystem(filesystem); 
   count = fs->filecount(fs);
-  if(count == 0) 
-    return -1;
   return count;
-}
+} 
 /** @} */
 
