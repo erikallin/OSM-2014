@@ -168,7 +168,8 @@ fs_t * tfs_init(gbd_t *disk)
     fs->read    = tfs_read;
     fs->write   = tfs_write;
     fs->getfree  = tfs_getfree;
-
+    //our newly implemented filecount
+    fs->filecount = tfs_filecount;
     return fs;
 }
 
@@ -210,6 +211,7 @@ int tfs_unmount(fs_t *fs)
  * @return If file found, return inode block number as fileid, otherwise
  * return VFS_NOT_FOUND.
  */
+
 int tfs_open(fs_t *fs, char *filename)
 {
     tfs_t *tfs;
@@ -815,6 +817,18 @@ int tfs_getfree(fs_t *fs)
     
     semaphore_V(tfs->lock);
     return (tfs->totalblocks - allocated)*TFS_BLOCK_SIZE;
+}
+//Our filecount
+int tfs_filecount(fs_t *fs) {
+  //Åbner en tfs_t, så vi kan tilgå tfs_direntry_t buffer_md el at.
+  tfs_t *tfs = (tfs_t *)fs->internal;
+  int count = 0;
+  for(int i=0;(uint32_t) i < TFS_MAX_FILES;i++) {
+    if(tfs->buffer_md[i].name != NULL) 
+      count++;
+  }   
+  return count;
+
 }
 
 /** @} */

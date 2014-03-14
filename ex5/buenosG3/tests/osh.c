@@ -24,6 +24,7 @@ int cmd_exit();
 int cmd_rm(int, char**);
 int cmd_cp(int, char**);
 int cmd_cmp(int, char**);
+int cmd_fcount(int, char**);
 
 cmd_t commands[] =
   { {"echo", cmd_echo, "print the arguments to the screen"},
@@ -33,7 +34,8 @@ cmd_t commands[] =
     {"exit", cmd_exit, "Terminates the shell"},
     {"rm", cmd_rm, "Remove file" },
     {"cp", cmd_cp, "Copy content of one file to another"},
-    {"cmp",cmd_cmp, "Compare content of one file to another"}
+    {"cmp",cmd_cmp, "Compare content of one file to another"},
+    {"fcount", cmd_fcount, "To test filecount"}
   };
 #define N_COMMANDS sizeof(commands) / sizeof(cmd_t)
 
@@ -303,7 +305,11 @@ int cmd_cmp(int argc, char** argv) {
   }
 }
 
+int cmd_fcount(int argc, char** argv) {
+ printf("%d\n",syscall_filecount(argv[1]));
+   return argc;
 
+}
 
 
 

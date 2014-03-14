@@ -74,6 +74,10 @@ pid_t syscall_execp(const char *filename, int argc, const char **argv)
                        (uint32_t) argv);
 }
 
+//filecount syscall Ex5
+int syscall_filecount(char const* name) {
+  return (int)_syscall(SYSCALL_FILECOUNT, (uint32_t) name,0,0);
+}
 
 /* Exit the current process with exit code 'retval'. Note that
  * 'retval' must be non-negative since syscall_join's negative return

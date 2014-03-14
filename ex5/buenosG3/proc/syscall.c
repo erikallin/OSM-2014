@@ -149,16 +149,9 @@ int syscall_delete(char const *pathname) {
 
 
 /* Task 2 */
-/*int syscall_filecount(char const *name) {
-  if (name == NULL) {
-    // Tæl mountede systemer 
-  //  vfs_mount(NULL, name);
-  }
-  else
-    // Tæl filer i den givne mount  
-    
-  return 0;
-}*/
+int syscall_filecount(char const *name) {
+   return (int) vfs_filecount((char*) name); 
+}
 
 //int syscall_file(char const* name, int index, char* buffer) {
 
@@ -236,7 +229,7 @@ void syscall_handle(context_t *user_context)
     case SYSCALL_CLOSE:
     V0 = syscall_close((int) A1);
     case SYSCALL_FILECOUNT: 
-   // V0 = syscall_filecount((char const*) A1);
+    V0 = syscall_filecount((char const*) A1);
     break;
     case SYSCALL_FILE:
   //  V0 = syscall_file((char const*) A1, (int) A2, (char*) A3);

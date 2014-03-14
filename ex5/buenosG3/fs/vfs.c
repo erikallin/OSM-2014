@@ -888,36 +888,27 @@ int vfs_getfree(char *filesystem)
     return ret;
 }
 
-int vfs_filecount(char* name) {
-  int count;
-  char* vol_name;
-  int vfs_table_entry;
-  int i;
+int vfs_filecount(char* filesystem) {
+  int count=0;
+  int i=0;
+  fs_t* fs;
   //Returns numbers of unmounted systems if name is NULL
-  if(name == NULL) {
+  if(filesystem == NULL) {
     while(i < CONFIG_MAX_FILESYSTEMS) {
-      if((void*)vfs_table.filesystems[i].mountpoint != NULL) 
+      //stringcmp returnere 0 hvis de er ens. Mountpoints er initialiseret som tom string
+      if(stringcmp(vfs_table.filesystems[i].mountpoint,"")) {
+       kprintf("%s\n",vfs_table.filesystems[i].mountpoint);
         count++; 
+      }
       i++;
     }
     return count;
-  } 
-  //Finder filsystemet med navnet name
-  while(i < CONFIG_MAX_FILESYSTEMS) { 
-    if(vfs_table.filesystems[i].mountpoint == name) {
-      vfs_table_entry = i;
-      break;
-    }
-    i++;
-   }
-  //tæller filer fra openfile_table med filesystemet fundet i forige løkke.
-  while(i < MAX_OPEN_FILES) {
-    if(openfile_table.files[i].filesystem == vfs_table.filesystems[i])
-      count++;
-    i++;
   }
-   return count;
-
+  fs = vfs_get_filesystem(filesystem); 
+  count = fs->filecount(fs);
+  if(count == 0) 
+    return -1;
+  return count;
 }
 /** @} */
 
