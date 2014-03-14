@@ -896,7 +896,7 @@ int vfs_filecount(char* filesystem) {
     while(i < CONFIG_MAX_FILESYSTEMS) {
       //stringcmp returnere 0 hvis de er ens. Mountpoints er initialiseret som tom string
       if(stringcmp(vfs_table.filesystems[i].mountpoint,"")) {
-       kprintf("%s\n",vfs_table.filesystems[i].mountpoint);
+       //kprintf("%s\n",vfs_table.filesystems[i].mountpoint);
         count++; 
       }
       i++;
@@ -908,5 +908,23 @@ int vfs_filecount(char* filesystem) {
   count = fs->filecount(fs);
   return count;
 } 
+
+int vfs_file(char* filesystem, int index, char* buffer) {
+  index = 1;
+  kprintf("kommet ind i vfs file\n");
+  if(filesystem == NULL) {
+  kprintf("filesystem var null");
+     stringcopy(vfs_table.filesystems[1].mountpoint, buffer,
+     VFS_NAME_LENGTH); 
+  kprintf("%s\n",buffer);
+  kprintf("string copy og sådan");
+       kprintf("%s\n",vfs_table.filesystems[1].mountpoint);
+  kprintf("wat");
+     return 0;
+  }
+  kprintf("filesystem vari kke null"); 
+       kprintf("%s\n",vfs_table.filesystems[index].mountpoint);
+  return 0;  
+}
 /** @} */
 

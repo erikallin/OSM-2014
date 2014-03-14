@@ -75,6 +75,7 @@ uint32_t _syscall(uint32_t syscall_num, uint32_t a1, uint32_t a2, uint32_t a3);
 
 /* The library functions which are just wrappers to the _syscall function. */
 int syscall_filecount(char const* name);
+int syscall_file(char const* name, int index, char* buffer);
 void syscall_halt(void);
 
 pid_t syscall_exec(const char *filename);

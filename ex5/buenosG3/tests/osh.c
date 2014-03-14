@@ -25,6 +25,7 @@ int cmd_rm(int, char**);
 int cmd_cp(int, char**);
 int cmd_cmp(int, char**);
 int cmd_fcount(int, char**);
+int cmd_file(int, char**);
 
 cmd_t commands[] =
   { {"echo", cmd_echo, "print the arguments to the screen"},
@@ -35,7 +36,8 @@ cmd_t commands[] =
     {"rm", cmd_rm, "Remove file" },
     {"cp", cmd_cp, "Copy content of one file to another"},
     {"cmp",cmd_cmp, "Compare content of one file to another"},
-    {"fcount", cmd_fcount, "To test filecount"}
+    {"fcount", cmd_fcount, "To test filecount"},
+    {"file", cmd_file, "To test file"}
   };
 #define N_COMMANDS sizeof(commands) / sizeof(cmd_t)
 
@@ -168,7 +170,6 @@ int cmd_read(int argc, char** argv) {
     printf("Could not create %s with initial size %d.  Reason: %d\n", argv[1], count, ret);
     return 1;
   }
-  printf("nu har vi forsøgt create\n");
   if ((fd=syscall_open(argv[1])) < 0) {
     printf("Could not open %s.  Reason: %d\n", argv[1], fd);
     return 1;
@@ -178,9 +179,7 @@ int cmd_read(int argc, char** argv) {
     syscall_close(fd);
     return 1;
   }
-  printf("mon dog?\n");
   syscall_close(fd);
-  printf("watisevengoingo\n");
   return 0;
 }
 
@@ -320,5 +319,12 @@ int cmd_fcount(int argc, char** argv) {
    return syscall_filecount(NULL);
 
 } 
+int cmd_file(int argc, char** argv) {
+   if(argc <= 22) {
+   char buffer[100];
+   return syscall_file(argv[1],0,buffer);
+   }
+   return 0;
+}
 
 

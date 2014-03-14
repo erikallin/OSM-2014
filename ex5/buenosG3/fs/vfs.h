@@ -137,6 +137,7 @@ typedef struct fs_struct{
     
     /* Our filecount and file calls */
     int (*filecount)(struct fs_struct *fs);
+    int (*file)(struct fs_struct *fs);
 } fs_t;
 
 
@@ -158,4 +159,5 @@ int vfs_create(char *pathname, int size);
 int vfs_remove(char *pathname);
 int vfs_getfree(char *filesystem);
 int vfs_filecount(char *filesystem);
+int vfs_file(char *filesystem, int index, char* buffer);
 #endif

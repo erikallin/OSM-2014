@@ -170,6 +170,7 @@ fs_t * tfs_init(gbd_t *disk)
     fs->getfree  = tfs_getfree;
     //our newly implemented filecount
     fs->filecount = tfs_filecount;
+    fs->file = tfs_file;
     return fs;
 }
 
@@ -828,7 +829,11 @@ int tfs_filecount(fs_t *fs) {
       count++;
   }   
   return count;
-
 } 
+int tfs_file(fs_t *fs) {
+  if(fs)
+  return 0;
+  return 0;
+}
 
 /** @} */
