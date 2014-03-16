@@ -910,18 +910,11 @@ int vfs_filecount(char* filesystem) {
 } 
 
 int vfs_file(char* filesystem, int index, char* buffer) {
-  index = 1;
-  kprintf("kommet ind i vfs file\n");
   if(filesystem == NULL) {
-  kprintf("filesystem var null");
-     stringcopy(vfs_table.filesystems[1].mountpoint, buffer,
-     VFS_NAME_LENGTH); 
-  kprintf("%s\n",buffer);
-  kprintf("string copy og sådan");
-       kprintf("%s\n",vfs_table.filesystems[1].mountpoint);
-  kprintf("wat");
-     return 0;
-  }
+  //buffer = (char*)&vfs_table.filesystems[index].mountpoint;
+    stringcopy(buffer, vfs_table.filesystems[index].mountpoint,VFS_NAME_LENGTH);
+  return 0;  
+}
   kprintf("filesystem vari kke null"); 
        kprintf("%s\n",vfs_table.filesystems[index].mountpoint);
   return 0;  

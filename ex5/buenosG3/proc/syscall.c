@@ -154,7 +154,6 @@ int syscall_filecount(char const *name) {
 } 
 
 int syscall_file(char const* name, int index, char* buffer) {
-   kprintf("kommet ind i syscall file\n");
    return (int) vfs_file((char*)name, (int)index,(char*) buffer);
 }
 
@@ -232,7 +231,6 @@ void syscall_handle(context_t *user_context)
     V0 = syscall_filecount((char const*) A1);
     break;
     case SYSCALL_FILE:
-    kprintf("syscall_file");
     V0 = syscall_file((char const*) A1, (int) A2, (char*) A3);
     break;
     default:

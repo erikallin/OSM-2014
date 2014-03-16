@@ -6,7 +6,7 @@
 
 #define BUFFER_SIZE 100
 #define PATH_LENGTH 256
-
+#define VFS_NAME_LENGTH 16
 
 typedef int (*cmd_fun_t)(int, char**);
 
@@ -320,11 +320,19 @@ int cmd_fcount(int argc, char** argv) {
 
 } 
 int cmd_file(int argc, char** argv) {
-   if(argc <= 22) {
-   char buffer[100];
-   return syscall_file(argv[1],0,buffer);
+
+   char buffer[BUFFER_SIZE];
+   if(argc <= 2) {
+   syscall_file(NULL,0,buffer);
+   int i = 0; 
+   for(i=0; i < VFS_NAME_LENGTH ; i++) { 
+     printf("%c",buffer[i]);
    }
+   printf("\n");
    return 0;
+   }
+   
+   return syscall_file(argv[1],0,buffer); 
 }
 
 
