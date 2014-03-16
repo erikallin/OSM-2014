@@ -830,9 +830,11 @@ int tfs_filecount(fs_t *fs) {
   }   
   return count;
 } 
-int tfs_file(fs_t *fs) {
-  if(fs)
-  return 0;
+int tfs_file(fs_t *fs,int index, char* buffer) {
+  tfs_t *tfs = (tfs_t *)fs->internal;
+ // kprintf("%s",tfs->buffer_md[1].name);
+ // kprintf("%s",tfs->buffer_md[2].name);
+  stringcopy(buffer,tfs->buffer_md[index].name,TFS_VOLUMENAME_MAX); 
   return 0;
 }
 

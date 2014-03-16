@@ -914,10 +914,10 @@ int vfs_file(char* filesystem, int index, char* buffer) {
   //buffer = (char*)&vfs_table.filesystems[index].mountpoint;
     stringcopy(buffer, vfs_table.filesystems[index].mountpoint,VFS_NAME_LENGTH);
   return 0;  
-}
-  kprintf("filesystem vari kke null"); 
-       kprintf("%s\n",vfs_table.filesystems[index].mountpoint);
-  return 0;  
+  }
+  fs_t* fs;
+  fs = vfs_get_filesystem(filesystem);
+  return fs->file(fs,index,buffer);
 }
 /** @} */
 

@@ -26,6 +26,7 @@ int cmd_cp(int, char**);
 int cmd_cmp(int, char**);
 int cmd_fcount(int, char**);
 int cmd_file(int, char**);
+int cmd_ls(int, char**);
 
 cmd_t commands[] =
   { {"echo", cmd_echo, "print the arguments to the screen"},
@@ -37,7 +38,8 @@ cmd_t commands[] =
     {"cp", cmd_cp, "Copy content of one file to another"},
     {"cmp",cmd_cmp, "Compare content of one file to another"},
     {"fcount", cmd_fcount, "To test filecount"},
-    {"file", cmd_file, "To test file"}
+    {"file", cmd_file, "To test file"},
+    {"ls", cmd_ls, "Print all files or disks if no argument given"}
   };
 #define N_COMMANDS sizeof(commands) / sizeof(cmd_t)
 
@@ -320,19 +322,48 @@ int cmd_fcount(int argc, char** argv) {
 
 } 
 int cmd_file(int argc, char** argv) {
-
+   int index = argc;
    char buffer[BUFFER_SIZE];
-   if(argc <= 2) {
-   syscall_file(NULL,0,buffer);
-   int i = 0; 
-   for(i=0; i < VFS_NAME_LENGTH ; i++) { 
+   if(argc < 2) {
+     syscall_file(NULL,index,buffer);
+     int i = 0; 
+     for(i=0; i < VFS_NAME_LENGTH ; i++) { 
      printf("%c",buffer[i]);
    }
-   printf("\n");
-   return 0;
+     printf("\n");
+     return 0;
+   } 
+   syscall_file(argv[1],index,buffer);
+   int i = 0;
+   for(i=0; i < VFS_NAME_LENGTH; i++) {
+     printf("%c",buffer[i]);
    }
-   
-   return syscall_file(argv[1],0,buffer); 
+   return 0;
+}
+int cmd_ls (int argc, char** argv) {
+  char buffer[BUFFER_SIZE];
+  int i=0;
+  if(argc < 2) {
+    int count = syscall_filecount(NULL);
+    for(i=0;i < count; i++) {
+      syscall_file(NULL,i,buffer);
+      printf("%s\n",buffer);
+    }
+  return 0;
+  }
+  int count = syscall_filecount(argv[1]);
+  int n = 0;
+  while(i < count) {
+    syscall_file(argv[1],n,buffer);
+    if(strlen(buffer) > 0) {
+      printf("%s\n",buffer);
+      i++;
+      n++;
+    }
+    else n++;
+  } 
+  return 0;
+
 }
 
 
