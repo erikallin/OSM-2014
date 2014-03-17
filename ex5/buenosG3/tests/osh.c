@@ -200,53 +200,51 @@ int cmd_exit() {
 
 //Hard to test without files
 int cmd_rm(int argc, char** argv) {
-  if(argc < 1) {
+  if(argc < 2) {
     printf("Not enough arguments for remove\n");
     return 0;
   }
   syscall_delete(argv[1]);
   printf("Removed file %s\n",argv[1]); 
-  return argc;
+  return 0;
 } 
 
 int cmd_cp(int argc, char** argv) {
   if (argc != 3) {
-    printf("Usage: show <file> <file>\n");
-    return 1;
+    printf("Usage: cp <file> <file>\n");
+    return 0;
   }
-  int fd;
-  int fe;
-  if ((fd=syscall_open(argv[1])) < 0) {
-    printf("Could not open %s.  Reason: %d\n", argv[1], fd);
-    return 1;
+  int file1;
+  int file2;
+  if ((file1=syscall_open(argv[1])) < 0) {
+    printf("Could not open %s.  Reason: %d\n", argv[1], file1);
+    return 0;
   }
   char buffer[BUFFER_SIZE];
-  //Tjekker om fil 2 findes, sletter hvis den gør
-  //if((fe = syscall_open(argv[2]) >= 0)) {
-  //lukker for at undgå uforudsete fejl
-  // syscall_close(fe);
-   syscall_delete(argv[2]);
- // }
-  //laver fil med fil2 navn, med størrelse som fil1.
+    syscall_delete(argv[2]);
+// Laver fil med fil2 navn, med størrelse som file1.
    int counter = 0;
    int size = 0;
-    while ((counter = syscall_read(fd, buffer, BUFFER_SIZE))) {
+// Finder størrelsen på file1
+   while ((counter = syscall_read(file1, buffer, BUFFER_SIZE))) {
       size += counter;
     }
-    printf("%d\n",size);
+    printf("%s copied to %s\n",argv[1], argv[2]);
+// Laver en ny fil, file2 med den samme størrelse som file1
     syscall_create(argv[2],size);
-  
-  syscall_close(fd);
-  fd = syscall_open(argv[1]);
+
+  syscall_close(file1);
+  file1 = syscall_open(argv[1]);
   int rd;
-  fe = syscall_open(argv[2]);
-  while ((rd = syscall_read(fd, buffer, BUFFER_SIZE))) {
+  file2 = syscall_open(argv[2]);
+// Skriver file1 over i file2
+   while ((rd = syscall_read(file1, buffer, BUFFER_SIZE))) {
     int wr = 0;
     int thiswr = 0;
     while (wr < rd) {
-       if((thiswr = syscall_write(fe, buffer+wr, rd-wr)) <= 0) {
-         syscall_close(fd);
-         syscall_close(fe);
+       if((thiswr = syscall_write(file2, buffer+wr, rd-wr)) <= 0) {
+         syscall_close(file1);
+         syscall_close(file2);
         return 1;
       }
       wr += thiswr;
@@ -254,25 +252,25 @@ int cmd_cp(int argc, char** argv) {
   }
   if (rd < 0) {
     printf("\nCall to syscall_read() failed.  Reason: %d.\n", rd);
-    syscall_close(fd);
-    syscall_close(fe);
+    syscall_close(file1);
+    syscall_close(file2);
     return 1;
   } else {
-    syscall_close(fd);
-    syscall_close(fe);
+    syscall_close(file1);
+    syscall_close(file2);
     return 0;
   }
 }
 
 int cmd_cmp(int argc, char** argv) {
  if (argc != 3) {
-    printf("Usage: show <file> <file>\n");
-    return 1;
+   printf("Usage: cmp <file> <file>\n");
+   return 1;
   }
   int fd;
   int fe;
   if ((fd=syscall_open(argv[1])) < 0) {
-    printf("Could not open %s.  Reason: %d\n", argv[1], fd);
+    printf("Could not open %s. Reason: %d\n", argv[1], fd);
     return 1;
   }
   if ((fe=syscall_open(argv[2])) < 0) {
@@ -282,6 +280,7 @@ int cmd_cmp(int argc, char** argv) {
   int rd;
   char buffer[BUFFER_SIZE];
   char buffer2[BUFFER_SIZE];
+// Tjekker om file1 og file2 er lige store.
   while ((rd = syscall_read(fd, buffer, BUFFER_SIZE))) {
     if (rd != syscall_read(fe, buffer2, BUFFER_SIZE)) {
       printf("The files are not equal\n");
@@ -289,8 +288,9 @@ int cmd_cmp(int argc, char** argv) {
     }
     int wr = 0;
     while (wr < rd) {
+// Tjekker byte for byte om de to filer er ens.
       if ((buffer[wr] != buffer2[wr])) {
-        printf("The files are not equal, who would've thought\n");
+        printf("The files are not equal\n");
         syscall_close(fd);
         syscall_close(fe);
         return 1;
@@ -298,13 +298,15 @@ int cmd_cmp(int argc, char** argv) {
       wr++;
     }
   }
+// Tjekker om størrelsen er mindre end 0
   if (rd < 0) {
-    printf("\nCall to syscall_read() failed.  Reason: %d.\n", rd);
+    printf("\nCall to syscall_read() failed. Reason: %d.\n", rd);
     syscall_close(fd);
     syscall_close(fe);
     return 1;
+// Hvis alle ovenstående går igennem er filerne ens.
   } else {
-    printf("\nThe files are equal! yey\n");
+    printf("\nThe files are equal!\n");
     syscall_close(fd);
     syscall_close(fe);
     return 0;

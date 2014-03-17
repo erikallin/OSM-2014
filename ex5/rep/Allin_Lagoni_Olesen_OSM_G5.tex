@@ -79,8 +79,56 @@
 
 % let's begin
 \section*{Task 1}
-Da alle de funktioner som vores kald skal bruge ligger i \texttt{fs/vfs.h}, 
-derfor wrapper vi disse funktioner.
+Da alle de funktioner som vores kald skal bruge ligger i \texttt{fs/vfs.h}, wrapper vi disse funktioner.
+\\
+I vores syscall benytter vi os af at vi ved, at ved at filesystemet som standard fylder 3 pladser, derfor, hvis input ikke er \texttt{stdout}, skal man lægge 3 til i \texttt{syscall\_open}, og derfor trække 3 fra når man vil læse fra en fil. 
+\\
+Dette benytter vi os af i \texttt{syscall\_write} og \texttt{syscall\_read}, da vi ellers ville kunne komme i problemer med stdin/stdout/stderr.
+
+
 \section*{Task 2}
+
+\subsection*{Exit}
+Kalder \texttt{syscall\_halt}, da det lukker systemet.
+
+\subsection*{Remove}
+Først tjekker vi om rm får givet et argument, hvis ikke printes en fejl. \\
+Hvis der gives et argument kaldes \texttt{syscall\_remove} på det filnavn der gives.
+
+
+\subsection*{Copy}
+I denne sletter vi argv[2], som er fildestinationen for den fil vi kopierer til. Dette gør vi grundet, at vi ikke kan udvide filstørrelsen for destinationen dynamisk, så kopieringen ville ikke fungere, hvis filerne ikke var lige store.
+\\
+For at undgå problemer med dette, så henter vi størrelsen ud for \texttt{file1} og sørger for at \texttt{file2} er ligeså stor.
+\\
+Herefter laver vi en løkke, som der \texttt{syscall\_write}r alt indhold fra \texttt{file1} over i \texttt{file2}.
+
+
+\subsection*{Compare}
+Først åbnes \texttt{file1} og \texttt{file2}, og der tjekkes om de er lige lange (da de ellers ikke er ens, og så er der ingen grund til at fortsætte). 
+\\
+Herefter tjekkes der byte for byte på de to filers buffer om disse er ens. Der tjekkes også om filens størrelse er mindre end 0.
+
+
+\subsection*{Ls}
+Ls bygger på FileCount og File. \\
+Denne kører \texttt{syscall\_file} minimum \texttt{syscall\_filecount} gange.
+Den bruger et loop med 2 countere til at køre filerne igennem og hoppe forbi nulls. På denne måde kan den printe dem alle selvom de ikke ligger lige efter hinanden.
+
+\subsubsection*{FileCount}
+Er implementeret delvist i \texttt{fs/vfs.c} og \texttt{fs/tfs.c} 
+\\
+Returnerer antallet af "unmounted file systems" hvis filsystemet der gives er lig NULL.
+Dette antal findes ved at bruge string-compare og køre alle filsystemer igennem og compare dem med en tom string, "". Disse tælles via en counter. 
+\\
+Hvis den ikke er NULL så går vi ind \texttt{tfs\_filecount} og tjekker alle filer igennem og counter op hver gang navnet ikke er lig en tom string.
+
+\subsubsection*{File}
+Hvis filsystemets navn er lig NULL, så string-copy'er vi indholdet af filsystemet over i bufferen.
+\\
+Ellers tager vi og kører \texttt{tfs\_file}, hvor vi går ind i tfs $\rightarrow$ buffer\_md på det specificerede index og kopierer dette over i bufferen.
+\\
+Der returneres 0 hvis dette lykkedes.
+
 
 \end{document}
