@@ -137,7 +137,7 @@ typedef struct fs_struct{
     
     /* Our filecount and file calls */
     int (*filecount)(struct fs_struct *fs);
-    int (*file)(struct fs_struct *fs,int index, char* buffer);
+    int (*file)(struct fs_struct *fs, int index, char* buffer);
 } fs_t;
 
 

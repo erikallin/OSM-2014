@@ -37,9 +37,11 @@ cmd_t commands[] =
     {"rm", cmd_rm, "Remove file" },
     {"cp", cmd_cp, "Copy content of one file to another"},
     {"cmp",cmd_cmp, "Compare content of one file to another"},
-    {"fcount", cmd_fcount, "To test filecount"},
-    {"file", cmd_file, "To test file"},
-    {"ls", cmd_ls, "Print all files or disks if no argument given"}
+    {"fcount", cmd_fcount, "Returns the number of files in a given volume"},
+    {"file", cmd_file, "Copies the name of a file or volume at a specified"
+      " index to a specified buffer."},
+    {"ls", cmd_ls, "Prints all files or disks if no argument given or files of"
+      " a volume if given"}
   };
 #define N_COMMANDS sizeof(commands) / sizeof(cmd_t)
 
@@ -226,8 +228,8 @@ int cmd_cp(int argc, char** argv) {
    syscall_delete(argv[2]);
  // }
   //laver fil med fil2 navn, med størrelse som fil1.
-   int counter=0;
-   int size=0;
+   int counter = 0;
+   int size = 0;
     while ((counter = syscall_read(fd, buffer, BUFFER_SIZE))) {
       size += counter;
     }
@@ -235,17 +237,16 @@ int cmd_cp(int argc, char** argv) {
     syscall_create(argv[2],size);
   
   syscall_close(fd);
-  fd=syscall_open(argv[1]);
+  fd = syscall_open(argv[1]);
   int rd;
   fe = syscall_open(argv[2]);
   while ((rd = syscall_read(fd, buffer, BUFFER_SIZE))) {
-    int wr=0;
-    int thiswr=0;
+    int wr = 0;
+    int thiswr = 0;
     while (wr < rd) {
-      printf("wr < rd 2");
-      if ((thiswr = syscall_write(fe, buffer+wr, rd-wr)) <= 0) {
-        syscall_close(fd);
-        syscall_close(fe);
+       if((thiswr = syscall_write(fe, buffer+wr, rd-wr)) <= 0) {
+         syscall_close(fd);
+         syscall_close(fe);
         return 1;
       }
       wr += thiswr;
@@ -311,34 +312,33 @@ int cmd_cmp(int argc, char** argv) {
 }
 
 int cmd_fcount(int argc, char** argv) {
- //giver null hvis der kun er 1 argument
+ //Giver null hvis der kun er 1 argument
  if(argc >= 2) {
- printf("%d\n",syscall_filecount(argv[1]));
+   printf("Number of files: %d\n",syscall_filecount(argv[1]));
    return syscall_filecount(argv[1]); 
  }
- //Giver null hvis der kun er 1 argument
  printf("%d\n",syscall_filecount(NULL));
    return syscall_filecount(NULL);
 
 } 
 int cmd_file(int argc, char** argv) {
-   int index = argc;
-   char buffer[BUFFER_SIZE];
-   if(argc < 2) {
-     syscall_file(NULL,index,buffer);
-     int i = 0; 
-     for(i=0; i < VFS_NAME_LENGTH ; i++) { 
-     printf("%c",buffer[i]);
-   }
-     printf("\n");
-     return 0;
-   } 
-   syscall_file(argv[1],index,buffer);
-   int i = 0;
-   for(i=0; i < VFS_NAME_LENGTH; i++) {
-     printf("%c",buffer[i]);
-   }
-   return 0;
+  int index = argc;
+  char buffer[BUFFER_SIZE];
+  if(argc < 2) {
+    syscall_file(NULL,index,buffer);
+    int i = 0; 
+    for(i=0; i < VFS_NAME_LENGTH; i++) { 
+      printf("%c",buffer[i]);
+    }
+      printf("\n");
+      return 0;
+  } 
+  syscall_file(argv[1],index,buffer);
+  int i = 0;
+  for(i=0; i < VFS_NAME_LENGTH; i++) {
+    printf("%c",buffer[i]);
+  }
+    return 0;
 }
 int cmd_ls (int argc, char** argv) {
   char buffer[BUFFER_SIZE];
@@ -349,21 +349,21 @@ int cmd_ls (int argc, char** argv) {
       syscall_file(NULL,i,buffer);
       printf("%s\n",buffer);
     }
-  return 0;
+    return 0;
   }
+// I tilfælde af at name er navnet på en Mounted volume
   int count = syscall_filecount(argv[1]);
   int n = 0;
   while(i < count) {
     syscall_file(argv[1],n,buffer);
     if(strlen(buffer) > 0) {
-      printf("%s\n",buffer);
+      printf(" %s\n", buffer);
       i++;
       n++;
     }
     else n++;
   } 
   return 0;
-
 }
 
 

@@ -168,7 +168,7 @@ fs_t * tfs_init(gbd_t *disk)
     fs->read    = tfs_read;
     fs->write   = tfs_write;
     fs->getfree  = tfs_getfree;
-    //our newly implemented filecount
+    // Our newly implemented filecount
     fs->filecount = tfs_filecount;
     fs->file = tfs_file;
     return fs;
@@ -827,14 +827,12 @@ int tfs_filecount(fs_t *fs) {
   for(int i=0;(uint32_t) i < TFS_MAX_FILES;i++) {
     if(stringcmp(tfs->buffer_md[i].name,""))
       count++;
-  }   
+  }
   return count;
-} 
-int tfs_file(fs_t *fs,int index, char* buffer) {
+}
+int tfs_file(fs_t *fs, int index, char* buffer) {
   tfs_t *tfs = (tfs_t *)fs->internal;
- // kprintf("%s",tfs->buffer_md[1].name);
- // kprintf("%s",tfs->buffer_md[2].name);
-  stringcopy(buffer,tfs->buffer_md[index].name,TFS_VOLUMENAME_MAX); 
+  stringcopy(buffer,tfs->buffer_md[index].name,TFS_VOLUMENAME_MAX);
   return 0;
 }
 

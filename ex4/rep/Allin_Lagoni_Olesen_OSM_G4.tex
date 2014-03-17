@@ -25,7 +25,7 @@
 \fancyhf{}
 \setlength{\headheight}{15pt}
 %Sidetal
-\cfoot[]{\thepage} 
+\cfoot[]{\thepage}
 %Centreret sidehoved
 \chead{Dennis Bøgelund Olesen, Emil Lagoni, Erik David Allin}
 
@@ -33,7 +33,7 @@
 
 \title{Styresystemer og multiprogrammering (OSM) - G4}
 \author{Dennis Bøgelund Olesen - 060593 - cwb759 \\ Emil Lagoni - 051290 - frs575 \\ Erik David Allin - 171292 - smt504}
-\date{24. Februar 2013}
+\date{10. marts 2013}
 
 \begin{document}
 \maketitle %insert the defined title
@@ -49,6 +49,45 @@
 
 
 \section*{Task 1}
+Hvis disse funktioner bliver kaldt fra kernel, vil exceptions blive håndteret
+ fra \texttt{kernel/exception.c}, og hvis kaldet kommer fra user-space håndteres
+ det fra \texttt{proc/exception.c}.
+\subsection*{tlb\_load/store\_exception}
+Denne funktion henter en side hvis denne side findes i en \texttt{pagetable}.
+ Hvis dette element findes, eller hvis det element man leder efter, findes i
+ pagetable, så indsættes siden i \texttt{tlb}'en, hvis der ikke er plads i denne
+ vil fjerne det ældste element og indsætte det nye. Dette
+ er dog ikke implementeret. \\
+ Hvis siden man søger efter i TLB'en ikke er eksisterende, så vil tlb\_probe
+ fange dette, da den tjekker TLB'en igennem for sider med specifikke ASID- og
+ VPN2 id'er. Hvis tlb\_probe ikke matcher nogen side, så vil den returnere
+ -1.
+
+\subsection*{tlb\_modified\_exception}
+Denne laver en kernel\_panic, da den kun bliver kaldt når \texttt{dirty bit} er
+ 0.
 
 \section*{Task 2}
+\subsection*{syscall\_memlimit}
+Vi har brugt \texttt{vm\_map} som den ser ud i
+ \texttt{proc/process.c:process\_start}.
+I forbindelse med dette har vi lavet den så den mapper en page ad gangen, og 
+herved undgår vi at remappe de samme pages flere gange. For at mappe forskellige
+sider kører vi loopet heap\_end - old\_heap\_end / PAGE\_SIZE - 1, gange.
+i old heap end har vi sørget for at processer i process\_start gemmer 3 $\cdot$
+ PAGESIZE da trådende i forvejen mapper 3 pages.
+ Efter siderne er mappet sætter vi heap\_end i processen, til argumentet heap\_end.
+
+\subsection*{malloc \& free}
+I denne har vi ikke kunnet få det til at virke, og derfor er koden i et vist 
+omfang meget pseudo. 
+Ideén var dog at vi fjernede den gamle byte heap[MAX\_HEAP] og satte free\_list
+= heap\_start + sizeof(free\_list)
+Derefter satte vi free list -> size = integer versionen af pointeren til 
+heap start + PAGE SIZE, så den peger på det bagerste.
+Når dette er gjort burde den givne kode kunne køre videre.
+Til sidst i kaldet, hvor den ender hvis der ikke er mappet nok plads, mapper vi
+en page mere og kalder malloc igen.
+\\
+I free ville der ikke umiddelbart kræve nogle ændring, da denne ikke mapper noget ny plads, og at vi har forsøgt at beholde free list strukturen.
 \end{document}
